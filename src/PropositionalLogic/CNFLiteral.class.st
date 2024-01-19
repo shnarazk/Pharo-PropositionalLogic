@@ -11,14 +11,26 @@ Class {
 { #category : 'instance creation' }
 CNFLiteral class >> from: anInt [
 
-	^ self new set: (anInt < 0 ifTrue: [ 2 * anInt + 1 ]
+	^ self new set: (anInt < 0 ifTrue: [ -2 * anInt + 1 ]
 				   ifFalse: [ 2 * anInt ]); yourself
+]
+
+{ #category : 'accessing' }
+CNFLiteral >> asVar [
+
+	^ encoded // 2
 ]
 
 { #category : 'accessing' }
 CNFLiteral >> encodedValue [
 
 	^ encoded
+]
+
+{ #category : 'accessing' }
+CNFLiteral >> negate [
+
+	^ self class new set: (encoded  odd ifTrue: [ encoded - 1 ] ifFalse: [encoded  + 1])
 ]
 
 { #category : 'accessing' }
