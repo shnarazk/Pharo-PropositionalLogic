@@ -1,6 +1,6 @@
 Class {
-	#name : 'CNFClause',
-	#superclass : 'CNF',
+	#name : 'PLAssignment',
+	#superclass : 'OrderedDictionary',
 	#category : 'PropositionalLogic',
 	#package : 'PropositionalLogic'
 }
