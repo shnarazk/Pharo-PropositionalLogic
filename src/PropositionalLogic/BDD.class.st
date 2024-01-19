@@ -1,5 +1,5 @@
 Class {
-	#name : 'ZDD',
+	#name : 'BDD',
 	#superclass : 'DD',
 	#instVars : [
 		'graph'
@@ -9,13 +9,13 @@ Class {
 }
 
 { #category : 'accessing' }
-ZDD >> graph [
+BDD >> graph [
 
 	^ graph
 ]
 
 { #category : 'accessing' }
-ZDD >> graph: anObject [
+BDD >> graph: anObject [
 
 	graph := anObject
 ]
