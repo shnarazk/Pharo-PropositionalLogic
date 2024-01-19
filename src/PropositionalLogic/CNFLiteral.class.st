@@ -11,8 +11,8 @@ Class {
 { #category : 'instance creation' }
 CNFLiteral class >> from: anInt [
 
-	^ self new set: (anInt < 0 ifTrue: [ 2 * anInt ]
-				   ifFalse: [ 2 * anInt + 1 ]); yourself
+	^ self new set: (anInt < 0 ifTrue: [ 2 * anInt + 1 ]
+				   ifFalse: [ 2 * anInt ]); yourself
 ]
 
 { #category : 'accessing' }
@@ -24,5 +24,6 @@ CNFLiteral >> encodedValue [
 { #category : 'accessing' }
 CNFLiteral >> set: anEncodedValue [
 
+	self assert: [ anEncodedValue ~~ 0 ] description: '0 cannot be encoded to literal'.
 	encoded := anEncodedValue
 ]
