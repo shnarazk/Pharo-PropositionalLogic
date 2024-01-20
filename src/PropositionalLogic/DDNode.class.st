@@ -5,9 +5,9 @@ Class {
 	#name : 'DDNode',
 	#superclass : 'Object',
 	#instVars : [
-		'id',
 		'high',
-		'low'
+		'low',
+		'literalIndex'
 	],
 	#classInstVars : [
 		'top',
@@ -27,16 +27,10 @@ DDNode class >> bottom [
 	^ bottom
 ]
 
-{ #category : 'instance creation' }
-DDNode class >> from: aDictionary [
-	"return a tree of DDNodes corresponding to aDictionary (from #id to #high and #low)"
-
-	^ self from: aDictionary after: 0
-]
-
-{ #category : 'instance creation' }
+{ #category : 'private' }
 DDNode class >> from: aDictionary after: anId [
 
+	<TODO: 'argument type was changed'>
 	^ aDictionary
 		  at: #value
 		  ifPresent: [ :aBool |
@@ -52,6 +46,13 @@ DDNode class >> from: aDictionary after: anId [
 				  yourself ]
 ]
 
+{ #category : 'instance creation' }
+DDNode class >> newFromAssociation: aTree [
+	"return a tree of DDNodes corresponding to an association tree (from #id to #high and #low)"
+
+	^ self from: aTree after: 0
+]
+
 { #category : 'constants' }
 DDNode class >> top [
 
@@ -65,7 +66,7 @@ DDNode class >> top [
 { #category : 'comparing' }
 DDNode >> = other [
 
-	^ id = other id and: [ high = other high and: [ low = other low ] ]
+	^ literalIndex = other id and: [ high = other high and: [ low = other low ] ]
 ]
 
 { #category : 'constants' }
@@ -92,7 +93,7 @@ DDNode >> flattened [
 { #category : 'as yet unclassified' }
 DDNode >> foldInto: aDictionary [
 
-	aDictionary at: id put: {
+	aDictionary at: literalIndex put: {
 			high.
 			low }.
 	high ifNotNil: [ high foldInto: aDictionary ].
@@ -103,7 +104,7 @@ DDNode >> foldInto: aDictionary [
 { #category : 'comparing' }
 DDNode >> hash [
 
-	^ id hash bitXor: (high hash bitXor: low hash)
+	^ literalIndex hash bitXor: (high hash bitXor: low hash)
 ]
 
 { #category : 'accessing' }
@@ -119,15 +120,15 @@ DDNode >> high: anObject [
 ]
 
 { #category : 'accessing' }
-DDNode >> id [
+DDNode >> literalIndex [
 
-	^ id
+	^ literalIndex
 ]
 
 { #category : 'accessing' }
-DDNode >> id: anObject [
+DDNode >> literalIndex: anInt [
 
-	id := anObject
+	literalIndex := anInt
 ]
 
 { #category : 'accessing' }
@@ -146,4 +147,10 @@ DDNode >> low: anObject [
 DDNode >> top [
 
 	^ self class top
+]
+
+{ #category : 'accessing' }
+DDNode >> varIndex [
+
+	^ literalIndex // 2
 ]
