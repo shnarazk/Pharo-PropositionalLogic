@@ -1,3 +1,6 @@
+"
+I am CNF composed of clauses and methods for roassal.
+"
 Class {
 	#name : 'CNFFormula',
 	#superclass : 'CNF',
@@ -12,4 +15,11 @@ Class {
 CNFFormula >> isSatisfiedUnder: anAssignment [
 
 	^ dictionary allSatisfy: [ :clause | clause isSatisfiedUnder: anAssignment ]
+]
+
+{ #category : 'evaluating' }
+CNFFormula >> satisfiable [
+	"return a satisfiable assignment or nil"
+
+	self notYetImplemented 
 ]

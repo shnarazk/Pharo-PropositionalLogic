@@ -1,3 +1,6 @@
+"
+Encoded literal
+"
 Class {
 	#name : 'CNFLiteral',
 	#superclass : 'Object',
