@@ -20,7 +20,10 @@ Class {
 { #category : 'constants' }
 DDNode class >> bottom [
 
-	bottom ifNil: [ top := OrderedCollection new ].
+	bottom ifNil: [
+		bottom := self new
+			          id: false;
+			          yourself ].
 	^ bottom
 ]
 
@@ -41,7 +44,10 @@ DDNode class >> from: aDictionary [
 { #category : 'constants' }
 DDNode class >> top [
 
-	top ifNil: [ top := OrderedCollection new ].
+	top ifNil: [
+		top := self new
+			       id: true;
+			       yourself ].
 	^ top
 ]
 
@@ -64,6 +70,23 @@ DDNode >> decode [
 	val := self id.
 	^ val odd ifTrue: [ val / 2 ]
 		  ifFalse: [ (val / 2) negated ]
+]
+
+{ #category : 'as yet unclassified' }
+DDNode >> flattened [
+
+	^ self foldInto: Dictionary new
+]
+
+{ #category : 'as yet unclassified' }
+DDNode >> foldInto: aDictionary [
+
+	aDictionary at: id put: {
+			high.
+			low }.
+	high ifNotNil: [ high foldInto: aDictionary ].
+	low ifNotNil: [ low foldInto: aDictionary ].
+	^ aDictionary
 ]
 
 { #category : 'comparing' }

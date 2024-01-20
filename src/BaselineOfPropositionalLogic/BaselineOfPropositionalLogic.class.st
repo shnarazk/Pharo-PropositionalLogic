@@ -10,5 +10,6 @@ BaselineOfPropositionalLogic >> baseline: spec [
 
 	<baseline>
 	spec for: #common do: [ spec package: 'PropositionalLogic' ].
-	spec for: #common do: [ spec package: 'PropositionalLogic-Tests' ]
+	spec for: #common do: [ spec package: 'PropositionalLogic-Tests' ].
+	spec for: #common do: [ spec package: 'PropositionalLogic-Examples' ]
 ]

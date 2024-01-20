@@ -19,6 +19,20 @@ DD class >> FromTree: aDictionary [
 		  yourself
 ]
 
+{ #category : 'accessing' }
+DD class >> bottom [
+	"return ⊥"
+
+	^ self new graph: DDNode bottom
+]
+
+{ #category : 'accessing' }
+DD class >> top [
+	"return top"
+
+	^ self new graph: DDNode top
+]
+
 { #category : 'comparing' }
 DD >> = other [
 
@@ -80,4 +94,16 @@ DD >> valueUnder: anAssignment [
 
 	<TODO: 'Is this a good name'>
 	self notYetImplemented
+]
+
+{ #category : 'drawing - roassal' }
+DD >> visualize [
+
+	| canvas elements |
+	canvas := RSCanvas new.
+	elements := (graph flattened values collect: [:each| RSEllipse new size: 5; yourself ]) as: RSGroup .
+	canvas addAll: elements .
+	RSTreeLayout  new on: elements .
+	canvas @ RSCanvasController.
+	^ canvas canvas
 ]
