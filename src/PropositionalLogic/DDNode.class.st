@@ -29,6 +29,13 @@ DDNode class >> bottom [
 
 { #category : 'instance creation' }
 DDNode class >> from: aDictionary [
+	"return a tree of DDNodes corresponding to aDictionary (from #id to #high and #low)"
+
+	^ self from: aDictionary after: 0
+]
+
+{ #category : 'instance creation' }
+DDNode class >> from: aDictionary after: anId [
 
 	^ aDictionary
 		  at: #value
@@ -36,8 +43,12 @@ DDNode class >> from: aDictionary [
 			  aBool ifTrue: [ self top ]
 				  ifFalse: [ self bottom ] ]
 		  ifAbsent: [
-			  self new high: (self from: (aDictionary at: #high));
-				  low: (self from: (aDictionary at: #low));
+			  | aLiteralIndex |
+			  self assert: [ anId < (aDictionary at: #id) ] description: 'Indices are out of order'.
+			  aLiteralIndex := aDictionary at: #id.
+			  self new id: aLiteralIndex;
+				  high: (self from: (aDictionary at: #high) after: aLiteralIndex);
+				  low: (self from: (aDictionary at: #low) after: aLiteralIndex + 1);
 				  yourself ]
 ]
 

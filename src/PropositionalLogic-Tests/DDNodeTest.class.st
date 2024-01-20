@@ -9,6 +9,13 @@ Class {
 }
 
 { #category : 'tests' }
+DDNodeTest >> testFrom [
+
+	| aDictionary aNode |
+	self notYetImplemented
+]
+
+{ #category : 'tests' }
 DDNodeTest >> testNew [
 
 	| node |
