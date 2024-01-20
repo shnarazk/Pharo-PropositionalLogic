@@ -9,6 +9,14 @@ Class {
 	#package : 'PropositionalLogic-Tests'
 }
 
+{ #category : 'running' }
+CNFLiteralTest >> setUp [
+
+	super setUp.
+	lit4 := CNFLiteral from: 4.
+	lit_4 := CNFLiteral from: -4
+]
+
 { #category : 'tests' }
 CNFLiteralTest >> testAsIndex [
 
