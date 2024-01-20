@@ -10,6 +10,12 @@ Class {
 	#package : 'PropositionalLogic'
 }
 
+{ #category : 'comparing' }
+DDNode >> = other [
+
+	^ id = other id and: [ high = other high and: [ low = other low ] ]
+]
+
 { #category : 'accessing' }
 DDNode >> decode [
 

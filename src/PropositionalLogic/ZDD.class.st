@@ -1,3 +1,6 @@
+"
+Zero-suppressed Decision Diagram
+"
 Class {
 	#name : 'ZDD',
 	#superclass : 'DD',
@@ -7,6 +10,12 @@ Class {
 	#category : 'PropositionalLogic',
 	#package : 'PropositionalLogic'
 }
+
+{ #category : 'comparing' }
+ZDD >> = other [
+
+	^ graph = other graph
+]
 
 { #category : 'accessing' }
 ZDD >> graph [
@@ -18,4 +27,10 @@ ZDD >> graph [
 ZDD >> graph: anObject [
 
 	graph := anObject
+]
+
+{ #category : 'comparing' }
+ZDD >> hash [
+
+	^ graph hash
 ]

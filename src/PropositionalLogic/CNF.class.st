@@ -1,6 +1,6 @@
 Class {
 	#name : 'CNF',
-	#superclass : 'Object',
+	#superclass : 'OrderedDictionary',
 	#category : 'PropositionalLogic',
 	#package : 'PropositionalLogic'
 }
@@ -9,4 +9,5 @@ Class {
 CNF >> isSatisfiedUnder: anAssignment [
 
 	self subclassResponsibility
+
 ]
