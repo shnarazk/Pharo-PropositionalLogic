@@ -26,9 +26,18 @@ CNFAssignment class >> FromTree: aDictionary [
 ]
 
 { #category : 'accessing' }
-CNFAssignment >> valueFor: anVar [
+CNFAssignment >> valueOfLiteral: aLiteral [
+	"return bool"
 
-	^ values at: anVar index
+	^ aLiteral positive ifTrue: [ values at: aLiteral varIndex ]
+		  ifFalse: [ (values at: aLiteral varIndex) not ]
+]
+
+{ #category : 'accessing' }
+CNFAssignment >> valueOfVar: aLiteral [
+	"return bool"
+
+	^ values at: aLiteral varIndex
 ]
 
 { #category : 'accessing' }

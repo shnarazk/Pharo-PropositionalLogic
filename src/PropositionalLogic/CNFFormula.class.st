@@ -23,3 +23,10 @@ CNFFormula >> satisfiable [
 
 	self notYetImplemented 
 ]
+
+{ #category : 'testing' }
+CNFFormula >> valueUnder: anAssignment [
+	"return bool"
+
+	^ self isSatisfiedUnder: anAssignment
+]

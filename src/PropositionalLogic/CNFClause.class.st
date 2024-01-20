@@ -7,3 +7,9 @@ Class {
 	#category : 'PropositionalLogic',
 	#package : 'PropositionalLogic'
 }
+
+{ #category : 'accessing' }
+CNFClause >> valueUnder: anAssignment [
+
+	self notYetImplemented
+]

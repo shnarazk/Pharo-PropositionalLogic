@@ -26,32 +26,19 @@ CNFLiteral class >> from: anInt [
 { #category : 'comparing' }
 CNFLiteral >> = other [
 
-	^ encoded = other encodedValue
-]
-
-{ #category : 'accessing' }
-CNFLiteral >> asBoolean [
-
-	^ encoded even
-]
-
-{ #category : 'accessing' }
-CNFLiteral >> asIndex [
-	"return an integer corresponding to var index of me"
-
-	^ encoded // 2
-]
-
-{ #category : 'accessing' }
-CNFLiteral >> encodedValue [
-
-	^ encoded
+	^ encoded = other literalIndex
 ]
 
 { #category : 'testing' }
 CNFLiteral >> isSatisfiedUnder: anAssignment [
 
-	^ self asBoolean = (anAssignment valueFor: self asIndex)
+	^ self value = (anAssignment valueOfVar: self varIndex)
+]
+
+{ #category : 'accessing' }
+CNFLiteral >> literalIndex [
+
+	^ encoded
 ]
 
 { #category : 'accessing' }
@@ -65,4 +52,18 @@ CNFLiteral >> set: anEncodedValue [
 
 	self assert: [ anEncodedValue ~~ 0 ] description: '0 cannot be encoded to literal'.
 	encoded := anEncodedValue
+]
+
+{ #category : 'evaluating' }
+CNFLiteral >> value [
+	"return bool"
+
+	^ encoded even
+]
+
+{ #category : 'accessing' }
+CNFLiteral >> varIndex [
+	"return an integer corresponding to var index of me"
+
+	^ encoded // 2
 ]

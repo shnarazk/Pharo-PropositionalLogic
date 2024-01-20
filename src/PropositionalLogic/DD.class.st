@@ -76,6 +76,7 @@ DD >> top [
 
 { #category : 'accessing' }
 DD >> valueUnder: anAssignment [
+	"return bool"
 
 	<TODO: 'Is this a good name'>
 	self notYetImplemented
