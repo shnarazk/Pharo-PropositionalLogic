@@ -36,8 +36,8 @@ DDNode class >> from: anAssociationOrBool after: anId [
 			  aLiteral := anAssociationOrBool key.
 			  subtree := anAssociationOrBool value.
 			  self new literal: aLiteral;
-				  high: (self from: (subtree at: 1) after: aLiteral);
-				  low: (self from: (subtree at: 2) after: aLiteral + 1);
+				  low: (self from: (subtree at: 1) after: aLiteral);
+				  high: (self from: (subtree at: 2) after: aLiteral);
 				  yourself ]
 		  ifFalse: [
 			  anAssociationOrBool ifTrue: [ self top ]
@@ -46,7 +46,7 @@ DDNode class >> from: anAssociationOrBool after: anId [
 
 { #category : 'instance creation' }
 DDNode class >> newFromAssociation: aTree [
-	"return a tree of DDNodes corresponding to an association tree (from #id to #high and #low)"
+	"return a tree of DDNodes corresponding to an association tree (from #id to #low and #high)"
 
 	^ self from: aTree after: 0
 ]
@@ -80,15 +80,6 @@ DDNode >> bottom [
 	^ self class bottom
 ]
 
-{ #category : 'accessing' }
-DDNode >> decode [
-
-	| val |
-	val := self id.
-	^ val odd ifTrue: [ val / 2 ]
-		  ifFalse: [ (val / 2) negated ]
-]
-
 { #category : 'converting' }
 DDNode >> flattened [
 
@@ -98,9 +89,9 @@ DDNode >> flattened [
 { #category : 'converting' }
 DDNode >> foldInto: aSet [
 
-	aSet add: self .
-	high ifNotNil: [ high foldInto: aSet ].
+	aSet add: self.
 	low ifNotNil: [ low foldInto: aSet ].
+	high ifNotNil: [ high foldInto: aSet ].
 	^ aSet
 ]
 

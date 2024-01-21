@@ -12,13 +12,13 @@ Class {
 }
 
 { #category : 'instance creation' }
-CNFAssignment class >> From: aDictionary [
+CNFAssignment class >> newFrom: associations [
 
-	^ self new values: aDictionary;
+	^ self new values: associations asDictionary;
 		  yourself
 ]
 
-{ #category : 'accessing' }
+{ #category : 'evaluating' }
 CNFAssignment >> valueOfLiteral: aLiteralInteger [
 	"return bool"
 
@@ -32,9 +32,21 @@ CNFAssignment >> valueOfLiteral: aLiteralInteger put: bool [
 	^ values at: aLiteralInteger put: bool
 ]
 
-{ #category : 'accessing' }
+{ #category : 'evaluating' }
 CNFAssignment >> valueOfVar: aVarIndex [
 	"return bool"
 
 	^ values at: aVarIndex
+]
+
+{ #category : 'accessing' }
+CNFAssignment >> values [
+
+	^ values
+]
+
+{ #category : 'accessing' }
+CNFAssignment >> values: anObject [
+
+	values := anObject
 ]

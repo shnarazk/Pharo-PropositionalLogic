@@ -7,3 +7,9 @@ Class {
 	#category : 'PropositionalLogic',
 	#package : 'PropositionalLogic'
 }
+
+{ #category : 'initialization' }
+BDD >> normalize [
+
+	self notYetImplemented
+]
