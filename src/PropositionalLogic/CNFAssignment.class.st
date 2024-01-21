@@ -3,7 +3,7 @@ Full/partial assignment from var index to boolean
 "
 Class {
 	#name : 'CNFAssignment',
-	#superclass : 'OrderedDictionary',
+	#superclass : 'Object',
 	#instVars : [
 		'values'
 	],
@@ -11,37 +11,30 @@ Class {
 	#package : 'PropositionalLogic'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 CNFAssignment class >> From: aDictionary [
 
-	^ self new setValues: aDictionary;
-		  yourself
-]
-
-{ #category : 'as yet unclassified' }
-CNFAssignment class >> FromTree: aDictionary [
-
-	^ self new setGraphFromTree: aDictionary;
+	^ self new values: aDictionary;
 		  yourself
 ]
 
 { #category : 'accessing' }
-CNFAssignment >> valueOfLiteral: aLiteral [
+CNFAssignment >> valueOfLiteral: aLiteralInteger [
 	"return bool"
 
-	^ aLiteral positive ifTrue: [ values at: aLiteral varIndex ]
-		  ifFalse: [ (values at: aLiteral varIndex) not ]
+	^ aLiteralInteger positive ifTrue: [ values at: aLiteralInteger varIndex ]
+		  ifFalse: [ (values at: aLiteralInteger varIndex) not ]
 ]
 
 { #category : 'accessing' }
-CNFAssignment >> valueOfVar: aLiteral [
-	"return bool"
+CNFAssignment >> valueOfLiteral: aLiteralInteger put: bool [
 
-	^ values at: aLiteral varIndex
+	^ values at: aLiteralInteger put: bool
 ]
 
 { #category : 'accessing' }
-CNFAssignment >> values: aDictionary [
+CNFAssignment >> valueOfVar: aVarIndex [
+	"return bool"
 
-	values := aDictionary
+	^ values at: aVarIndex
 ]
