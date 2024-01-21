@@ -13,15 +13,15 @@ Class {
 CNFLiteralTest >> setUp [
 
 	super setUp.
-	lit4 := CNFLiteral from: 4.
-	lit_4 := CNFLiteral from: -4
+	lit4 := CNFLiteral @ 4.
+	lit_4 := CNFLiteral @ -4
 ]
 
 { #category : 'tests' }
 CNFLiteralTest >> testAsIndex [
 
 	|lit|
-	lit := CNFLiteral from: -8.
+	lit := CNFLiteral @ -8.
 	self assert: lit varIndex equals: 8.
 	
 ]
@@ -32,7 +32,7 @@ CNFLiteralTest >> testEncodedValue [
 	| lit |
 	self assert: lit4 literalIndex equals: 8.
 	self assert: lit_4 literalIndex equals: 9.
-	lit := CNFLiteral from: 8.
+	lit := CNFLiteral @ 8.
 	self assert: lit literalIndex equals: 16
 ]
 
@@ -40,7 +40,7 @@ CNFLiteralTest >> testEncodedValue [
 CNFLiteralTest >> testNegated [
 
 	| lit |
-	lit := CNFLiteral from: 1.
+	lit := CNFLiteral @ 1.
 	self assert: lit negated literalIndex equals: 3.
 	lit set: 5.
 	self assert: lit negated literalIndex equals: 4.
@@ -51,7 +51,7 @@ CNFLiteralTest >> testNegated [
 CNFLiteralTest >> testSet [
 
 	| lit |
-	lit := CNFLiteral from: 8.
+	lit := CNFLiteral @ 8.
 	lit set: 11.
 	self assert: lit literalIndex equals: 11.
 	self should: [ lit set: 0 ] raise: AssertionFailure .

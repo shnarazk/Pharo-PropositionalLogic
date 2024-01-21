@@ -3,7 +3,7 @@ I am a class to support BDD/ZDD development.
 "
 Class {
 	#name : 'DDBuilder',
-	#superclass : 'DD',
+	#superclass : 'Object',
 	#category : 'PropositionalLogic-Examples',
 	#package : 'PropositionalLogic-Examples'
 }

@@ -9,18 +9,11 @@ Class {
 }
 
 { #category : 'tests' }
-DDNodeTest >> testFrom [
-
-	| aDictionary aNode |
-	self notYetImplemented
-]
-
-{ #category : 'tests' }
 DDNodeTest >> testNew [
 
 	| node |
 	node := DDNode new.
-	self assert: node id equals: nil.
+	self assert: node literal equals: nil.
 	self assert: node high equals: nil.
 	self assert: node low equals: nil
 ]
@@ -30,6 +23,6 @@ DDNodeTest >> testNewFromAssociation [
 
 	| aNode |
 	aNode := DDNode newFromAssociation:
-		         { (1 -> { (2 -> true , -2 -> false) } , -1 -> { (2 -> false , 3 -> true) }) }.
-	self assert: aNode literalIndex equals: 2
+		         1 -> { 2 ->{  true .  false}  . 3 -> { false . true } }.
+	self assert: aNode literal equals: 1
 ]

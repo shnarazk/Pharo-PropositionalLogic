@@ -12,15 +12,22 @@ Class {
 }
 
 { #category : 'instance creation' }
-CNFLiteral class >> from: anInt [
-	"Make a literal from an integer"
+CNFLiteral class >> @ aliteral [
+	"Make a literal from an integer literal"
 
-	"(CNFLiteral from: 4) encodedValue >>> 8"
-	"(CNFLiteral from: -4) encodedValue >>> 9"
+	"(CNFLiteral @ 4) literalIndex >>> 8"
 
-	^ self new set: (anInt < 0 ifTrue: [ -2 * anInt + 1 ]
-				   ifFalse: [ 2 * anInt ]);
+	"(CNFLiteral @ -4) literalIndex >>> 9"
+
+	^ self new set: (aliteral < 0 ifTrue: [ -2 * aliteral + 1 ]
+				   ifFalse: [ 2 * aliteral ]);
 		  yourself
+]
+
+{ #category : 'instance creation' }
+CNFLiteral class >> newFrom: aliteral [
+
+	^ self @ aliteral
 ]
 
 { #category : 'comparing' }

@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'high',
 		'low',
-		'literalIndex'
+		'literal'
 	],
 	#classInstVars : [
 		'top',
@@ -21,29 +21,27 @@ Class {
 DDNode class >> bottom [
 
 	bottom ifNil: [
-		bottom := self new
-			          id: false;
+		bottom := self new literalIndex: false;
 			          yourself ].
 	^ bottom
 ]
 
 { #category : 'private' }
-DDNode class >> from: aDictionary after: anId [
+DDNode class >> from: anAssociationOrBool after: anId [
 
-	<TODO: 'argument type was changed'>
-	^ aDictionary
-		  at: #value
-		  ifPresent: [ :aBool |
-			  aBool ifTrue: [ self top ]
-				  ifFalse: [ self bottom ] ]
-		  ifAbsent: [
-			  | aLiteralIndex |
-			  self assert: [ anId < (aDictionary at: #id) ] description: 'Indices are out of order'.
-			  aLiteralIndex := aDictionary at: #id.
-			  self new id: aLiteralIndex;
-				  high: (self from: (aDictionary at: #high) after: aLiteralIndex);
-				  low: (self from: (aDictionary at: #low) after: aLiteralIndex + 1);
+	^ anAssociationOrBool isAssociation
+		  ifTrue: [
+			  | aLiteral subtree |
+			  self assert: [ anId < anAssociationOrBool key ] description: 'Indices are out of order'.
+			  aLiteral := anAssociationOrBool key.
+			  subtree := anAssociationOrBool value.
+			  self new literal: aLiteral;
+				  high: (self from: (subtree at: 1) after: aLiteral);
+				  low: (self from: (subtree at: 2) after: aLiteral + 1);
 				  yourself ]
+		  ifFalse: [
+			  anAssociationOrBool ifTrue: [ self top ]
+				  ifFalse: [ self bottom ] ]
 ]
 
 { #category : 'instance creation' }
@@ -57,8 +55,7 @@ DDNode class >> newFromAssociation: aTree [
 DDNode class >> top [
 
 	top ifNil: [
-		top := self new
-			       id: true;
+		top := self new literalIndex: true;
 			       yourself ].
 	^ top
 ]
@@ -66,7 +63,7 @@ DDNode class >> top [
 { #category : 'comparing' }
 DDNode >> = other [
 
-	^ literalIndex = other id and: [ high = other high and: [ low = other low ] ]
+	^ literal = other id and: [ high = other high and: [ low = other low ] ]
 ]
 
 { #category : 'constants' }
@@ -84,16 +81,16 @@ DDNode >> decode [
 		  ifFalse: [ (val / 2) negated ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'converting' }
 DDNode >> flattened [
 
 	^ self foldInto: Dictionary new
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'converting' }
 DDNode >> foldInto: aDictionary [
 
-	aDictionary at: literalIndex put: {
+	aDictionary at: literal put: {
 			high.
 			low }.
 	high ifNotNil: [ high foldInto: aDictionary ].
@@ -104,7 +101,7 @@ DDNode >> foldInto: aDictionary [
 { #category : 'comparing' }
 DDNode >> hash [
 
-	^ literalIndex hash bitXor: (high hash bitXor: low hash)
+	^ literal hash bitXor: (high hash bitXor: low hash)
 ]
 
 { #category : 'accessing' }
@@ -120,15 +117,15 @@ DDNode >> high: anObject [
 ]
 
 { #category : 'accessing' }
-DDNode >> literalIndex [
+DDNode >> literal [
 
-	^ literalIndex
+	^ literal
 ]
 
 { #category : 'accessing' }
-DDNode >> literalIndex: anInt [
+DDNode >> literal: anObject [
 
-	literalIndex := anInt
+	literal := anObject
 ]
 
 { #category : 'accessing' }
@@ -152,5 +149,5 @@ DDNode >> top [
 { #category : 'accessing' }
 DDNode >> varIndex [
 
-	^ literalIndex // 2
+	^ literal abs
 ]
