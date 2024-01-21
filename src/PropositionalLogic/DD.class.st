@@ -12,18 +12,18 @@ Class {
 	#package : 'PropositionalLogic'
 }
 
-{ #category : 'instance creation' }
-DD class >> FromTree: aDictionary [
-
-	^ self new setGraphFromTree: aDictionary;
-		  yourself
-]
-
 { #category : 'accessing' }
 DD class >> bottom [
 	"return ⊥"
 
 	^ self new graph: DDNode bottom
+]
+
+{ #category : 'instance creation' }
+DD class >> newFromAssociation: anAssociation [
+
+	^ self new setGraphFromAssociation: anAssociation;
+		  yourself
 ]
 
 { #category : 'accessing' }
@@ -77,9 +77,9 @@ DD >> hash [
 ]
 
 { #category : 'initialization' }
-DD >> setGraphFromTree: aDictionary [
+DD >> setGraphFromAssociation: anAssociation [
 
-	graph := DDNode from: aDictionary
+	graph := DDNode newFromAssociation: anAssociation
 ]
 
 { #category : 'accessing' }
@@ -98,12 +98,30 @@ DD >> valueUnder: anAssignment [
 
 { #category : 'drawing - roassal' }
 DD >> visualize [
+	"Draw top as a blue elipsse and bottom as a black one."
 
-	| canvas elements |
+	| canvas elements nodes |
 	canvas := RSCanvas new.
-	elements := (graph flattened values collect: [:each| RSEllipse new size: 5; yourself ]) as: RSGroup .
-	canvas addAll: elements .
-	RSTreeLayout  new on: elements .
+	nodes := graph flattened.
+	elements := (nodes collect: [ :each |
+		             | node |
+		             node := RSEllipse new size: 5;
+			                     model: each;
+			                     yourself.
+		             each literal isNumber ifFalse: [
+			             each literal ifTrue: [ node color: Color blue ].
+			             each literal ifFalse: [ node color: Color black ] ].
+		             node ]) as: RSGroup.
+	canvas addAll: elements.
+	RSLineBuilder line canvas: canvas;
+		width: 1;
+		color: Color blue;
+		connectFromAll: [ :each | nodes select: [ :n | n high == each ] ].
+	RSLineBuilder line canvas: canvas;
+		width: 1;
+		color: Color red;
+		connectFromAll: [ :each | nodes select: [ :n | n low == each ] ].
+	RSTreeLayout new on: elements.
 	canvas @ RSCanvasController.
 	^ canvas canvas
 ]

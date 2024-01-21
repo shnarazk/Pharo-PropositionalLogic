@@ -19,3 +19,11 @@ DDBuilder class >> ddTop [
 
 	^ BDD new top
 ]
+
+{ #category : 'examples' }
+DDBuilder class >> sample [
+
+	^ BDD newFromAssociation: 1 -> {
+			  (2 -> { true. false }).
+			  (3 -> { false. true }) }
+]

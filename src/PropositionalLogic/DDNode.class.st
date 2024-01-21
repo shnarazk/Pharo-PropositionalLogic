@@ -21,7 +21,7 @@ Class {
 DDNode class >> bottom [
 
 	bottom ifNil: [
-		bottom := self new literalIndex: false;
+		bottom := self new literal: false;
 			          yourself ].
 	^ bottom
 ]
@@ -51,11 +51,19 @@ DDNode class >> newFromAssociation: aTree [
 	^ self from: aTree after: 0
 ]
 
+{ #category : 'class initialization' }
+DDNode class >> reset [
+	"reset top and bottom"
+
+	top := nil.
+	bottom := nil
+]
+
 { #category : 'constants' }
 DDNode class >> top [
 
 	top ifNil: [
-		top := self new literalIndex: true;
+		top := self new literal: true;
 			       yourself ].
 	^ top
 ]
@@ -63,7 +71,7 @@ DDNode class >> top [
 { #category : 'comparing' }
 DDNode >> = other [
 
-	^ literal = other id and: [ high = other high and: [ low = other low ] ]
+	^ literal = other literal and: [ high = other high and: [ low = other low ] ]
 ]
 
 { #category : 'constants' }
@@ -84,18 +92,16 @@ DDNode >> decode [
 { #category : 'converting' }
 DDNode >> flattened [
 
-	^ self foldInto: Dictionary new
+	^ self foldInto: Set new
 ]
 
 { #category : 'converting' }
-DDNode >> foldInto: aDictionary [
+DDNode >> foldInto: aSet [
 
-	aDictionary at: literal put: {
-			high.
-			low }.
-	high ifNotNil: [ high foldInto: aDictionary ].
-	low ifNotNil: [ low foldInto: aDictionary ].
-	^ aDictionary
+	aSet add: self .
+	high ifNotNil: [ high foldInto: aSet ].
+	low ifNotNil: [ low foldInto: aSet ].
+	^ aSet
 ]
 
 { #category : 'comparing' }
