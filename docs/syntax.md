@@ -44,7 +44,7 @@ FIXME
 | `12` `2r1100` `16rC` | twelve (decimal, binary, hexadecimal) |
 | `3.14` `1.2e3` | floating-point numbers |
 | `.` | expression separator (period) |
-| `;` | message cascae (semicolon) |
+| `;` | message cascade (semicolon) |
 | `:=` | assignment |
 | `^` | return a result from a method (caret) |
 | `#(abc 123)` | literal array with the symbol `#abc` and the number `123` |
