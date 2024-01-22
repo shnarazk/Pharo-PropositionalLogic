@@ -53,7 +53,8 @@ DD >> bottom [
 ]
 
 { #category : 'algorithm' }
-DD >> compose: x1 and: x2 [
+DD >> compose: aBool as: other [
+	"f_1|_{x_i=f_2}"
 
 	self subclassResponsibility
 ]
@@ -84,30 +85,42 @@ DD >> normalize [
 
 { #category : 'algorithm' }
 DD >> reduce [
+	"reduce to canonical form"
 
 	self subclassResponsibility
 ]
 
 { #category : 'algorithm' }
 DD >> restrict: varIndex [
+	"f|_{x_i=b}"
+
+	self subclassResponsibility
+]
+
+{ #category : 'algorithm' }
+DD >> restrict: varIndex to: aBool [
+	"f|_{x_i=b}"
 
 	self subclassResponsibility
 ]
 
 { #category : 'evaluating' }
 DD >> satisfyAll [
+	"S_f"
 
 	self subclassResponsibility
 ]
 
 { #category : 'evaluating' }
 DD >> satisfyCount [
+	"|S_f|"
 
 	self subclassResponsibility
 ]
 
 { #category : 'evaluating' }
 DD >> satisfyOne [
+	"some element of S_f"
 
 	self subclassResponsibility
 ]

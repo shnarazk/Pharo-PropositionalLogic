@@ -7,7 +7,9 @@ Class {
 	#instVars : [
 		'high',
 		'low',
-		'literal'
+		'literal',
+		'index',
+		'mark'
 	],
 	#classInstVars : [
 		'top',
@@ -114,7 +116,22 @@ DDNode >> high: anObject [
 ]
 
 { #category : 'accessing' }
+DDNode >> index [
+
+	^ index
+]
+
+{ #category : 'accessing' }
+DDNode >> index: anObject [
+
+	index := anObject
+]
+
+{ #category : 'accessing' }
 DDNode >> literal [
+	"This field contains a integeridentifier which is unique to that vertex in the graph. It does not
+	matter how the identifiers are ordered among the
+	vertices, only that they range from 1 up to the number of vertices and that they all be different."
 
 	^ literal
 ]
@@ -135,6 +152,19 @@ DDNode >> low [
 DDNode >> low: anObject [
 
 	low := anObject
+]
+
+{ #category : 'accessing' }
+DDNode >> mark [
+	"This is used to mark which vertices have been visited during a traversal of the graph."
+
+	^ mark
+]
+
+{ #category : 'accessing' }
+DDNode >> mark: anObject [
+
+	mark := anObject
 ]
 
 { #category : 'constants' }
