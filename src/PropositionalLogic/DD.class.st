@@ -40,7 +40,7 @@ DD >> = other [
 	^ graph = other graph
 ]
 
-{ #category : 'truncation and round off' }
+{ #category : 'algorithm' }
 DD >> apply: other [
 
 	self subclassResponsibility
@@ -52,7 +52,7 @@ DD >> bottom [
 	^ self class bottom
 ]
 
-{ #category : 'truncation and round off' }
+{ #category : 'algorithm' }
 DD >> compose: x1 and: x2 [
 
 	self subclassResponsibility
@@ -79,16 +79,16 @@ DD >> hash [
 { #category : 'initialization' }
 DD >> normalize [
 
-	self notYetImplemented
+	self reduce
 ]
 
-{ #category : 'evaluating' }
+{ #category : 'algorithm' }
 DD >> reduce [
 
 	self subclassResponsibility
 ]
 
-{ #category : 'evaluating' }
+{ #category : 'algorithm' }
 DD >> restrict: varIndex [
 
 	self subclassResponsibility
