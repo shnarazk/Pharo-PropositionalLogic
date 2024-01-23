@@ -123,19 +123,44 @@ BDD >> normalize [
 { #category : 'algorithm' }
 BDD >> reduce [
 
-	| subgraph vlist nextId |
+	self reduce: graph
+]
+
+{ #category : 'algorithm' }
+BDD >> reduce: aNode [
+
+	| nodes subgraph vlist nextId |
 	graph setIndex.
-	subgraph := Array new: self size withAll: nil.
-	vlist := Dictionary newFrom: (graph allNodesSet collect: [ :each |
-			          each varIndex -> (OrderedCollection new
-				           add: each;
-				           yourself) ]).
+	nodes := graph allNodesSet.
+	subgraph := Array new: nodes size withAll: nil.
+	vlist := (nodes collect: [ :each | each index -> (OrderedCollection new add: each; yourself) ])
+		         asOrderedCollection.
 	nextId := 0.
-	vlist do: [ :each |
-		| q |
+	vlist reversed do: [ :aList |
+		| q oldKey |
 		q := OrderedCollection new.
-		self notYetImplemented ].
-	self notYetImplemented
+		aList value do: [ :u |
+			u literal isNumber ifFalse: [ q add: u value -> u ]
+				ifTrue: [
+					u low index == u high index ifTrue: [ u index: u low index ]
+						ifFalse: [ q add: u low index @ u high index -> u ] ] ].
+		q sort.
+		oldKey := { -1. -1 }. "unmatchable key"
+		[ 0 < q size ] whileTrue: [
+			| tmp key u |
+			tmp := q removeFirst.
+			key := tmp key.
+			u := tmp value.
+			key == oldKey ifTrue: [ u index: nextId "matches existing vervex" ]
+				ifFalse: [ "unique vertex"
+					nextId := nextId + 1.
+					u index: nextId.
+					subgraph at: nextId put: u.
+					u low traceCr.
+					u low ifNotNil: [ u low: (subgraph at: u low index) ].
+					u high ifNotNil: [ u high: (subgraph at: u high index) ].
+					oldKey := key ] ] ].
+	^ subgraph at: aNode index
 ]
 
 { #category : 'algorithm' }
