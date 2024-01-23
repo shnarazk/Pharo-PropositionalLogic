@@ -70,10 +70,21 @@ DDNode class >> top [
 	^ top
 ]
 
-{ #category : 'comparing' }
-DDNode >> = other [
+{ #category : 'converting' }
+DDNode >> allNodesSet [
+	"return the sub nodes under me as a set"
 
-	^ literal = other literal and: [ high = other high and: [ low = other low ] ]
+	| queue aSet |
+	queue := OrderedCollection new.
+	aSet := Set  new.
+	queue addLast: self.
+	[ 0 < queue size ] whileTrue: [
+		| node |
+		node := queue removeFirst.
+		aSet add: node.
+		node low ifNotNil: [ queue addLast: node low ].
+		node high ifNotNil: [ queue addLast: node high ] ].
+	^ aSet
 ]
 
 { #category : 'constants' }
@@ -83,24 +94,12 @@ DDNode >> bottom [
 ]
 
 { #category : 'converting' }
-DDNode >> flattened [
-
-	^ self foldInto: Set new
-]
-
-{ #category : 'converting' }
 DDNode >> foldInto: aSet [
 
 	aSet add: self.
 	low ifNotNil: [ low foldInto: aSet ].
 	high ifNotNil: [ high foldInto: aSet ].
 	^ aSet
-]
-
-{ #category : 'comparing' }
-DDNode >> hash [
-
-	^ literal hash bitXor: (high hash bitXor: low hash)
 ]
 
 { #category : 'accessing' }
@@ -165,6 +164,42 @@ DDNode >> mark [
 DDNode >> mark: anObject [
 
 	mark := anObject
+]
+
+{ #category : 'private' }
+DDNode >> resetIndex [
+
+	| queue |
+	queue := OrderedCollection new.
+	queue addLast: self.
+	[ 0 < queue size ] whileTrue: [
+		| node |
+		node := queue removeFirst.
+		node index: nil.
+		node low ifNotNil: [ queue addLast: node low ].
+		node high ifNotNil: [ queue addLast: node high ] ].
+
+]
+
+{ #category : 'initialization' }
+DDNode >> setIndex [
+	"assign an integer to each node in width-first order. and return the last used index"
+
+	| n queue |
+	"For a graph, not a tree, we have to traverse each node once at most. So reset them to nil first."
+	self resetIndex.
+	n := 1.
+	queue := OrderedCollection new.
+	queue addLast: self.
+	[ 0 < queue size ] whileTrue: [
+		| node |
+		node := queue removeFirst.
+		node index ifNil: [
+			node index: n.
+			n := n + 1.
+			node low ifNotNil: [ queue addLast: node low ].
+			node high ifNotNil: [ queue addLast: node high ] ] ].
+	^ n
 ]
 
 { #category : 'constants' }

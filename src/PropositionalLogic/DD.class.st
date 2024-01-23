@@ -22,9 +22,10 @@ DD class >> bottom [
 { #category : 'instance creation' }
 DD class >> newFromAssociation: anAssociation [
 
-	^ self new setGraphFromAssociation: anAssociation;
-		  normalize;
-		  yourself
+	<todo: 'normalize'>
+	^ self new
+		  setGraphFromAssociation: anAssociation;
+		  "normalize"yourself
 ]
 
 { #category : 'accessing' }
@@ -151,22 +152,26 @@ DD >> visualize [
 
 	| canvas elements nodes |
 	canvas := RSCanvas new.
-	nodes := graph flattened.
+	nodes := graph allNodesSet.
 	elements := (nodes collect: [ :each |
 		             | node |
-		             node := RSEllipse new size: 5;
+		             node := RSEllipse new
+			                     size: 5;
 			                     model: each;
+			                     draggable;
 			                     yourself.
 		             each literal isNumber ifFalse: [
 			             each literal ifTrue: [ node color: Color blue ].
 			             each literal ifFalse: [ node color: Color black ] ].
 		             node ]) as: RSGroup.
 	canvas addAll: elements.
-	RSLineBuilder line canvas: canvas;
+	RSLineBuilder line
+		canvas: canvas;
 		width: 1;
 		color: Color blue;
 		connectFromAll: [ :each | nodes select: [ :n | n high == each ] ].
-	RSLineBuilder line canvas: canvas;
+	RSLineBuilder line
+		canvas: canvas;
 		width: 1;
 		color: Color red;
 		connectFromAll: [ :each | nodes select: [ :n | n low == each ] ].

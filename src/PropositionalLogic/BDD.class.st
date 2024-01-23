@@ -124,9 +124,11 @@ BDD >> normalize [
 BDD >> reduce [
 
 	| subgraph vlist nextId |
+	graph setIndex.
 	subgraph := Array new: self size withAll: nil.
-	vlist := Dictionary newFrom: (graph flattened collect: [ :each |
-			          each varIndex -> (OrderedCollection new add: each;
+	vlist := Dictionary newFrom: (graph allNodesSet collect: [ :each |
+			          each varIndex -> (OrderedCollection new
+				           add: each;
 				           yourself) ]).
 	nextId := 0.
 	vlist do: [ :each |
@@ -134,7 +136,6 @@ BDD >> reduce [
 		q := OrderedCollection new.
 		self notYetImplemented ].
 	self notYetImplemented
-
 ]
 
 { #category : 'algorithm' }
