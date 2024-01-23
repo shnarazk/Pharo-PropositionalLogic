@@ -1,4 +1,4 @@
-# Pharo-ZDD
+# Pharo-PropositionalLogic
 
 ```smalltalk
 Metacello new
