@@ -144,21 +144,20 @@ BDD >> reduce: aNode [
 	"vlist := (nodes collect: [ :each | each index -> (OrderedCollection new add: each; yourself) ])
 	asOrderedCollection."
 	nextId := 2.
-	"vlist traceCr."
-	vlist keys reversed do: [ :literal |
+	vlist keys traceCr.
+	vlist keys sorted reversed do: [ :literal |
 		| q oldKey |
+		literal traceCr.
 		q := OrderedCollection new.
 		(vlist at: literal) do: [ :u |
-			u literal isNumber ifFalse: [ q add: u literal -> u ]
-				ifTrue: [
-					u low == u high ifTrue: [ u index: u lowIndex ]
-						ifFalse: [ q add: u lowIndex @ u highIndex -> u ] ] ].
+			u low == u high ifTrue: [ u index: u lowIndex ]
+				ifFalse: [ q add: u lowIndex @ u highIndex -> u ] ].
 		q sort.
-		oldKey := { -2. -2 }. "unmatchable key"
+		oldKey := { 0. 0 }. "unmatchable key"
+		self assert: q size < 10.
 		q traceCr.
-		[ 0 < q size ] whileTrue: [
-			| tmp key u |
-			tmp := q removeFirst.
+		q do: [ :tmp |
+			| key u |
 			key := tmp key.
 			u := tmp value.
 			self assert: u low isNotNil.
