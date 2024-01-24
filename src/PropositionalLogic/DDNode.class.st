@@ -22,28 +22,25 @@ Class {
 { #category : 'constants' }
 DDNode class >> bottom [
 
-	bottom ifNil: [
-		bottom := self new literal: false;
-			          yourself ].
-	^ bottom
+	^ false
 ]
 
 { #category : 'private' }
-DDNode class >> from: anAssociationOrBool after: anId [
+DDNode class >> from: anAssociation after: anId [
+	"make a non-terminate node(self)"
 
-	^ anAssociationOrBool isAssociation
-		  ifTrue: [
-			  | aLiteral subtree |
-			  self assert: [ anId < anAssociationOrBool key ] description: 'Indices are out of order'.
-			  aLiteral := anAssociationOrBool key.
-			  subtree := anAssociationOrBool value.
-			  self new literal: aLiteral;
-				  low: (self from: (subtree at: 1) after: aLiteral);
-				  high: (self from: (subtree at: 2) after: aLiteral);
-				  yourself ]
-		  ifFalse: [
-			  anAssociationOrBool ifTrue: [ self top ]
-				  ifFalse: [ self bottom ] ]
+	| aLiteral node low high |
+	self assert: anAssociation isAssociation description: 'first argmument is not an association'.
+	self assert: [ anId < anAssociation key ] description: 'Indices are out of order'.
+	aLiteral := anAssociation key.
+	low := anAssociation value at: 1.
+	high := anAssociation value at: 2.
+	node := self new literal: aLiteral; yourself.
+	node low: (low isAssociation ifTrue: [ self from: low after: aLiteral ]
+			 ifFalse: [ low ]).
+	node high: (high isAssociation ifTrue: [ self from: high after: aLiteral ]
+			 ifFalse: [ high ]).
+	^ node
 ]
 
 { #category : 'instance creation' }
@@ -64,10 +61,7 @@ DDNode class >> reset [
 { #category : 'constants' }
 DDNode class >> top [
 
-	top ifNil: [
-		top := self new literal: true;
-			       yourself ].
-	^ top
+	^ true
 ]
 
 { #category : 'converting' }
