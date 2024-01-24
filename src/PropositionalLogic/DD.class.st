@@ -23,9 +23,7 @@ DD class >> bottom [
 DD class >> newFromAssociation: anAssociation [
 
 	<todo: 'normalize'>
-	^ self new
-		  setGraphFromAssociation: anAssociation;
-		  "normalize"yourself
+	^ self new setGraphFromAssociation: anAssociation; reduce; yourself
 ]
 
 { #category : 'accessing' }

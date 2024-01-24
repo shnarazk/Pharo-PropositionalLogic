@@ -108,6 +108,16 @@ DDNode >> high: anObject [
 	high := anObject
 ]
 
+{ #category : 'as yet unclassified' }
+DDNode >> highIndex [
+
+	^ high isLiteral
+		  ifTrue: [
+			  high ifFalse: [ 1 ]
+				  ifTrue: [ 2 ] ]
+		  ifFalse: [ high index ]
+]
+
 { #category : 'accessing' }
 DDNode >> index [
 
@@ -147,6 +157,16 @@ DDNode >> low: anObject [
 	low := anObject
 ]
 
+{ #category : 'as yet unclassified' }
+DDNode >> lowIndex [
+
+	^ low isLiteral
+		  ifTrue: [
+			  low ifFalse: [ 1 ]
+				  ifTrue: [ 2 ] ]
+		  ifFalse: [ low index ]
+]
+
 { #category : 'accessing' }
 DDNode >> mark [
 	"This is used to mark which vertices have been visited during a traversal of the graph."
@@ -170,30 +190,36 @@ DDNode >> resetIndex [
 		| node |
 		node := queue removeFirst.
 		node index: nil.
-		node low ifNotNil: [ queue addLast: node low ].
-		node high ifNotNil: [ queue addLast: node high ] ].
-
+		self assert: node low isNotNil description: 'low must point to another node or a boolean'.
+		self assert: node high isNotNil description: 'high must point to another node or a boolean'.
+		node low isLiteral ifFalse: [ queue addLast: node low ].
+		node high isLiteral ifFalse: [ queue addLast: node high ] ]
 ]
 
 { #category : 'initialization' }
 DDNode >> setIndex [
-	"assign an integer to each node in width-first order. and return the last used index"
+	"assign an integer to each non-terminal node in width-first order. and return the last used index"
 
-	| n queue |
+	| n queue nodes |
 	"For a graph, not a tree, we have to traverse each node once at most. So reset them to nil first."
 	self resetIndex.
-	n := 1.
+	"assign 1 to the terminal node false, and 2 to the terminal node true,"
+	n := 2.
 	queue := OrderedCollection new.
+	nodes := Set new.
 	queue addLast: self.
 	[ 0 < queue size ] whileTrue: [
 		| node |
 		node := queue removeFirst.
 		node index ifNil: [
-			node index: n.
 			n := n + 1.
-			node low ifNotNil: [ queue addLast: node low ].
-			node high ifNotNil: [ queue addLast: node high ] ] ].
-	^ n
+			node index: n.
+			nodes add: node.
+			node low isLiteral ifFalse: [ queue addLast: node low ].
+			node high isLiteral ifFalse: [ queue addLast: node high ] ] ].
+	"Then relabel to start from leaves to root"
+	nodes do: [ :each | each index: n - each index + 3].
+	^ n - 3
 ]
 
 { #category : 'constants' }

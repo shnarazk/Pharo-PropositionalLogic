@@ -47,8 +47,9 @@ DDNodeTest >> testNewFromAssociation [
 DDNodeTest >> testSetIndex [
 
 	| nodes indices |
+	graph setIndex.
 	nodes := graph allNodesSet.
 	indices := nodes collect: [ :each | each index ].
-	self assert: graph index equals: 1.
+	self assert: graph index equals: nodes size + 2.
 	(1 to: nodes size) allSatisfy: [ :each | nodes includes: each ]
 ]
