@@ -153,28 +153,21 @@ DD >> visualize [
 	| canvas elements nodes |
 	canvas := RSCanvas new.
 	nodes := graph allNodesSet.
-	elements := (nodes collect: [ :each |
-		             | node |
-		             node := RSEllipse new
-			                     size: 5;
-			                     model: each;
-			                     draggable;
-			                     yourself.
-		             each literal isNumber ifFalse: [
-			             each literal ifTrue: [ node color: Color blue ].
-			             each literal ifFalse: [ node color: Color black ] ].
-		             node ]) as: RSGroup.
+	elements := nodes collect: [ :each |
+		            | node |
+		            node := RSEllipse new size: 5; model: each; draggable; yourself.
+		            each literal isNumber ifFalse: [
+			            each literal ifTrue: [ node color: Color blue ].
+			            each literal ifFalse: [ node color: Color black ] ].
+		            node ].
+	elements add: (RSEllipse new size: 5; model: false; color: Color blue; draggable; yourself).
+	elements add: (RSEllipse new size: 5; model: true; color: Color red; draggable; yourself).
+	elements := elements as: RSGroup.
 	canvas addAll: elements.
-	RSLineBuilder line
-		canvas: canvas;
-		width: 1;
-		color: Color blue;
-		connectFromAll: [ :each | nodes select: [ :n | n high == each ] ].
-	RSLineBuilder line
-		canvas: canvas;
-		width: 1;
-		color: Color red;
-		connectFromAll: [ :each | nodes select: [ :n | n low == each ] ].
+	RSLineBuilder line canvas: canvas; width: 1; color: Color red; connectFromAll: [ :each |
+			nodes select: [ :n | n high == each ] ].
+	RSLineBuilder line canvas: canvas; width: 1; color: Color blue; connectFromAll: [ :each |
+			nodes select: [ :n | n low == each ] ].
 	RSTreeLayout new on: elements.
 	canvas @ RSCanvasController.
 	^ canvas canvas

@@ -76,8 +76,8 @@ DDNode >> allNodesSet [
 		| node |
 		node := queue removeFirst.
 		aSet add: node.
-		node low ifNotNil: [ queue addLast: node low ].
-		node high ifNotNil: [ queue addLast: node high ] ].
+		node low isLiteral ifFalse: [ queue addLast: node low ].
+		node high isLiteral ifFalse: [ queue addLast: node high ] ].
 	^ aSet
 ]
 
