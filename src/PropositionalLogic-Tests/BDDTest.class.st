@@ -15,4 +15,6 @@ BDDTest >> testReduce [
 	bdd := DDBuilder majority.
 	bdd reduce.
 	self assert: bdd size equals: 4.
+	bdd reduce.
+	self assert: bdd size equals: 4
 ]

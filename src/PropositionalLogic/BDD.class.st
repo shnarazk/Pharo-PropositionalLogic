@@ -130,41 +130,30 @@ BDD >> reduce [
 BDD >> reduce: aNode [
 
 	| nodes subgraph vlist nextId |
-	graph setIndex.
-	nodes := graph allNodesSet.
-	subgraph := Array new: nodes size + 2 withAll: nil.
-	subgraph at: 1 put: false.
-	subgraph at: 2 put: true.
-	vlist := Dictionary new.
+	nodes := graph setIndex; allNodesSet.
+	subgraph := (Array new: nodes size + 2 withAll: nil) at: 1 put: false; at: 2 put: true; yourself.
 	"Put each vertex u reachable from v on list vlist[u.index]"
-	nodes do: [ :node |
-		vlist at: node literal
-			ifPresent: [ :set | set add: node ]
-			ifAbsentPut: [ OrderedCollection new add: node; yourself ] ].
+	vlist := nodes inject: Dictionary new into: [ :dic :node |
+		         dic at: node literal
+			         ifPresent: [ :set | set add: node ]
+			         ifAbsentPut: [ OrderedCollection new add: node; yourself ]; yourself ].
 	nextId := 2.
 	vlist keys sorted reversed do: [ :literal |
 		| q oldKey |
-		q := OrderedCollection new.
-		(vlist at: literal) do: [ :u |
-			u low == u high ifTrue: [ u index: u lowIndex ]
-				ifFalse: [ q add: u lowIndex @ u highIndex -> u ] ].
-		q sort.
-		oldKey := { 0. 0 }. "unmatchable key"
-		q do: [ :tmp |
+		q := (vlist at: literal) inject: OrderedCollection new into: [ :c :u |
+			     u low == u high ifTrue: [ u index: u lowIndex ]
+				     ifFalse: [ c add: u lowIndex @ u highIndex -> u ].
+			     c ].
+		oldKey := nil. "unmatchable key"
+		q sorted do: [ :tmp |
 			| key u |
 			key := tmp key.
 			u := tmp value.
-			"self assert: u low isNotNil.self assert: u high isNotNil."
 			key = oldKey ifTrue: [ u index: nextId "matches existing vervex" ]
 				ifFalse: [ "unique vertex"
 					nextId := nextId + 1.
-					u index: nextId.
+					u index: nextId; low: (subgraph at: u lowIndex); high: (subgraph at: u highIndex).
 					subgraph at: nextId put: u.
-					"u low isLiteral ifFalse: [ u low: (subgraph at: u lowIndex) ]."
-					u low: (subgraph at: u lowIndex).
-					"u high isLiteral ifFalse: [ u high: (subgraph at: u highIndex) ]."
-					u high: (subgraph at: u highIndex).
-					"self assert: u low isNotNil.self assert: u high isNotNil"
 					oldKey := key ] ] ].
 	^ subgraph at: aNode index
 ]
