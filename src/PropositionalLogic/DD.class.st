@@ -131,6 +131,12 @@ DD >> setGraphFromAssociation: anAssociation [
 ]
 
 { #category : 'accessing' }
+DD >> size [
+
+	^ graph allNodesSet size
+]
+
+{ #category : 'accessing' }
 DD >> top [
 
 	^ self class top
