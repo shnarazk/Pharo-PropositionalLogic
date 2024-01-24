@@ -51,5 +51,7 @@ DDNodeTest >> testSetIndex [
 	nodes := graph allNodesSet.
 	indices := nodes collect: [ :each | each index ].
 	self assert: graph index equals: nodes size + 2.
-	(1 to: nodes size) allSatisfy: [ :each | nodes includes: each ]
+	(1 to: nodes size) allSatisfy: [ :each | nodes includes: each ].
+	self assert: (nodes allSatisfy: [ :node | node index > node lowIndex ]).
+	self assert: (nodes allSatisfy: [ :node | node index > node highIndex ])
 ]

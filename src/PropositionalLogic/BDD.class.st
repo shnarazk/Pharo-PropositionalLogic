@@ -129,21 +129,26 @@ BDD >> reduce [
 { #category : 'algorithm' }
 BDD >> reduce: aNode [
 
-	| nodes subgraph vlist nextId tmp |
+	| nodes subgraph vlist nextId |
 	graph setIndex.
 	nodes := graph allNodesSet.
 	subgraph := Array new: nodes size + 2 withAll: nil.
 	subgraph at: 1 put: false.
 	subgraph at: 2 put: true.
-	vlist := (nodes collect: [ :each | each index -> (OrderedCollection new add: each; yourself) ])
-		         asOrderedCollection.
+	vlist := Dictionary new.
+	nodes do: [ :node |
+		vlist at: node literal
+			ifPresent: [ :set | set add: node ]
+			ifAbsentPut: [ OrderedCollection new add: node; yourself ] ].
+	"Put each vertex u reachable from v on list vlist[u.index]"
+	"vlist := (nodes collect: [ :each | each index -> (OrderedCollection new add: each; yourself) ])
+	asOrderedCollection."
 	nextId := 2.
 	"vlist traceCr."
-	tmp := vlist sorted reversed.
-	vlist sorted do: [ :aList |
+	vlist keys reversed do: [ :literal |
 		| q oldKey |
 		q := OrderedCollection new.
-		aList value do: [ :u |
+		(vlist at: literal) do: [ :u |
 			u literal isNumber ifFalse: [ q add: u literal -> u ]
 				ifTrue: [
 					u low == u high ifTrue: [ u index: u lowIndex ]

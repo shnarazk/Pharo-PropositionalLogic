@@ -218,8 +218,8 @@ DDNode >> setIndex [
 			node low isLiteral ifFalse: [ queue addLast: node low ].
 			node high isLiteral ifFalse: [ queue addLast: node high ] ] ].
 	"Then relabel to start from leaves to root"
-	nodes do: [ :each | each index: n - each index + 3].
-	^ n - 3
+	nodes do: [ :each | each index: n - each index + 3].	
+	^ n
 ]
 
 { #category : 'constants' }
