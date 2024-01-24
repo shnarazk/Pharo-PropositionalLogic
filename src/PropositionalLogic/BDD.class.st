@@ -136,43 +136,35 @@ BDD >> reduce: aNode [
 	subgraph at: 1 put: false.
 	subgraph at: 2 put: true.
 	vlist := Dictionary new.
+	"Put each vertex u reachable from v on list vlist[u.index]"
 	nodes do: [ :node |
 		vlist at: node literal
 			ifPresent: [ :set | set add: node ]
 			ifAbsentPut: [ OrderedCollection new add: node; yourself ] ].
-	"Put each vertex u reachable from v on list vlist[u.index]"
-	"vlist := (nodes collect: [ :each | each index -> (OrderedCollection new add: each; yourself) ])
-	asOrderedCollection."
 	nextId := 2.
-	vlist keys traceCr.
 	vlist keys sorted reversed do: [ :literal |
 		| q oldKey |
-		literal traceCr.
 		q := OrderedCollection new.
 		(vlist at: literal) do: [ :u |
 			u low == u high ifTrue: [ u index: u lowIndex ]
 				ifFalse: [ q add: u lowIndex @ u highIndex -> u ] ].
 		q sort.
 		oldKey := { 0. 0 }. "unmatchable key"
-		self assert: q size < 10.
-		q traceCr.
 		q do: [ :tmp |
 			| key u |
 			key := tmp key.
 			u := tmp value.
-			self assert: u low isNotNil.
-			self assert: u high isNotNil.
+			"self assert: u low isNotNil.self assert: u high isNotNil."
 			key = oldKey ifTrue: [ u index: nextId "matches existing vervex" ]
 				ifFalse: [ "unique vertex"
 					nextId := nextId + 1.
 					u index: nextId.
 					subgraph at: nextId put: u.
-					"subgraph traceCr."
-					u lowIndex traceCr.
-					u low isLiteral ifFalse: [ u low: (subgraph at: u lowIndex) ].
-					u high isLiteral ifFalse: [ u high: (subgraph at: u highIndex) ].
-					self assert: u low isNotNil.
-					self assert: u high isNotNil.
+					"u low isLiteral ifFalse: [ u low: (subgraph at: u lowIndex) ]."
+					u low: (subgraph at: u lowIndex).
+					"u high isLiteral ifFalse: [ u high: (subgraph at: u highIndex) ]."
+					u high: (subgraph at: u highIndex).
+					"self assert: u low isNotNil.self assert: u high isNotNil"
 					oldKey := key ] ] ].
 	^ subgraph at: aNode index
 ]
