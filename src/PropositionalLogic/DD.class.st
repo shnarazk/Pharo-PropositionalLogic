@@ -76,6 +76,13 @@ DD >> hash [
 	^ graph hash
 ]
 
+{ #category : 'inspector extensions' }
+DD >> inspectionGraph [
+
+	<inspectorPresentationOrder: 10 title: 'Graph'>
+	^ SpRoassalPresenter new canvas: self visualize; yourself
+]
+
 { #category : 'initialization' }
 DD >> normalize [
 
@@ -159,13 +166,14 @@ DD >> visualize [
 	nodes := graph allNodesSet.
 	elements := nodes collect: [ :each |
 		            | node |
-		            node := RSEllipse new size: 5; model: each; draggable; yourself.
+		            node := RSLabel new size: 5; model: each; draggable; text: each literal; yourself.
 		            each literal isNumber ifFalse: [
 			            each literal ifTrue: [ node color: Color blue ].
 			            each literal ifFalse: [ node color: Color black ] ].
 		            node ].
-	elements add: (RSEllipse new size: 5; model: false; color: Color blue; draggable; yourself).
-	elements add: (RSEllipse new size: 5; model: true; color: Color red; draggable; yourself).
+	elements add:
+		(RSLabel new size: 5; model: false; color: Color blue; draggable; text: 'F'; yourself).
+	elements add: (RSLabel new size: 5; model: true; color: Color red; draggable; text: 'T'; yourself).
 	elements := elements as: RSGroup.
 	canvas addAll: elements.
 	RSLineBuilder line canvas: canvas; width: 1; color: Color red; connectFromAll: [ :each |
