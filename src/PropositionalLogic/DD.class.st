@@ -161,24 +161,31 @@ DD >> valueUnder: anAssignment [
 DD >> visualize [
 	"Draw top as a blue elipsse and bottom as a black one."
 
-	| canvas elements nodes |
+	| canvas elements nodes node |
 	canvas := RSCanvas new.
 	nodes := graph allNodesSet.
 	elements := nodes collect: [ :each |
-		            | node |
-		            node := RSLabel new size: 5; model: each; draggable; text: each literal; yourself.
+		            node := RSGroup new.
+		            node add:
+			            (RSEllipse new size: 10; color: Color white; borderColor: Color gray; yourself).
+		            node add: (RSLabel new fontSize: 4; text: each literal; yourself).
 		            each literal isNumber ifFalse: [
 			            each literal ifTrue: [ node color: Color blue ].
 			            each literal ifFalse: [ node color: Color black ] ].
-		            node ].
-	elements add:
-		(RSLabel new size: 5; model: false; color: Color blue; draggable; text: 'F'; yourself).
-	elements add: (RSLabel new size: 5; model: true; color: Color red; draggable; text: 'T'; yourself).
+		            node asShape model: each; draggable; yourself ].
+	node := RSGroup new.
+	node add: (RSEllipse new size: 10; color: Color white; borderColor: Color blue; yourself).
+	node add: (RSLabel new fontSize: 4; text: 'F'; yourself).
+	elements add: (node asShape model: false; draggable; yourself).
+	node := RSGroup new.
+	node add: (RSEllipse new size: 10; color: Color white; borderColor: Color red; yourself).
+	node add: (RSLabel new fontSize: 4; text: 'T'; yourself).
+	elements add: (node asShape model: true; draggable; yourself).
 	elements := elements as: RSGroup.
 	canvas addAll: elements.
-	RSLineBuilder line canvas: canvas; width: 1; color: Color red; connectFromAll: [ :each |
+	RSLineBuilder line moveBehind; canvas: canvas; width: 1; color: Color red; connectFromAll: [ :each |
 			nodes select: [ :n | n high == each ] ].
-	RSLineBuilder line canvas: canvas; width: 1; color: Color blue; connectFromAll: [ :each |
+	RSLineBuilder line moveBehind; canvas: canvas; width: 1; color: Color blue; connectFromAll: [ :each |
 			nodes select: [ :n | n low == each ] ].
 	RSTreeLayout new on: elements.
 	canvas @ RSCanvasController.
