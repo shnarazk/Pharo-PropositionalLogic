@@ -74,46 +74,9 @@ Class {
 	#package : 'PropositionalLogic'
 }
 
-{ #category : 'algorithm' }
-BDD >> apply: other [
-
-	self deprecated: 'Use apply:with:withControllingValue instead of current one'
-		on: '25 January 2024'
-		in: 'Pharo-12.0.0+SNAPSHOT.build.1312.sha.123065a569c1d0be754349a706639461efc5de3c (64 Bit)'.
-	self notYetImplemented
-
-	"
-	fn apply(v1: vertex, v2: vertex; op: Operator) -> vertex {
-	// Recursive routine to implement Apply
-	fn apply_step(mut T: Array<vertex>, v1: vertex; v2: vertex, op: Operator) -> vertex {
-	let mut u = T[v1.id, v2.id];
-	if u != null { return u; }    // have already evaluated
-	u = vertex::new();
-	u.mark = false;
-	T[v1.id, v2.id] = v1.value op v2.value;
-	if u.value != X {
-	// create terminal vervex
-	u.index = n + 1;
-	u.low = null; u.high = null;
-	} else {
-	u.inddex = v1.index.min(v2.index);
-	if v1.index == u.index { vlow1 = v1.low; vhigh1 = v1.hight;  } else {   vlow1 = v1; vhigh1 = v1; }
-	if v2.index == u.index {  vlow2 = v2.low; vhigh2 = v2.hight;  } else {   vlow2 = v2; vhigh2 = v2; }
-	u.low = apply_step(T, vlow1, vlow2, op);
-	u.high = apply_step(T, vhigh1, vhigh2, op);
-	}
-	u
-	}
-	let mut T: Array<vertex>[1..|G1|, 1..|G2|];
-	initialize all elements of T to null;
-	reduce(apply_step(T, v1, v2, op))
-	}
-	"
-]
-
-{ #category : 'algorithm' }
-BDD >> apply: aBlock on: v1 and: v2 matrix: aTable [
-	"recursive routine to implment apply:on:and:"
+{ #category : 'algorithm - private' }
+BDD >> apply: aBlock on: v1 and: v2 withTable: aTable [
+	"recursive routine to implement apply:with:withControllingValue:"
 
 	| v1index v2index u value1 value2 value |
 	v1index := v1 isLiteral ifTrue: [ v1 ifFalse: [ 1 ] ifTrue: [ 3 ] ] ifFalse: [ v1 index ].
@@ -145,10 +108,6 @@ BDD >> apply: aBlock on: v1 and: v2 matrix: aTable [
 		ifNil: [
 			| vlow1 vlow2 vhigh1 vhigh2 |
 			"create nonterminal and evaluate further down"
-			vlow1 := nil.
-			vlow2 := nil.
-			vhigh1 := nil.
-			vhigh2 := nil.
 			u index: (v1 index min: v2 index).
 			v1 index = u index
 				ifTrue: [
@@ -167,11 +126,11 @@ BDD >> apply: aBlock on: v1 and: v2 matrix: aTable [
 			u low: (self apply: aBlock
 					 on: vlow1
 					 and: vlow2
-					 matrix: aTable).
+					 withTable: aTable).
 			u high: (self apply: aBlock
 					 on: vlow1
 					 and: vlow2
-					 matrix: aTable) ].
+					 withTable: aTable) ].
 	^ u
 
 	"
@@ -207,8 +166,11 @@ BDD >> apply: aBlock on: v1 and: v2 matrix: aTable [
 BDD >> apply: anOperator with: other withControllingValue: aBool [
 	"corntrollingValue should be embedded to aTable at 1 and 2"
 
-	self notYetImplemented
-
+	graph := self apply: anOperator
+		         on: graph
+		         and: other graph
+		         withTable: (Dictionary new at: false put: aBool; at: true put: aBool; yourself).
+	^ self reduce
 	"
 	fn apply(v1: vertex, v2: vertex; op: Operator) -> vertex {
 	// Recursive routine to implement Apply
@@ -256,7 +218,7 @@ BDD >> reduce [
 	self reduce: graph
 ]
 
-{ #category : 'algorithm' }
+{ #category : 'algorithm - private' }
 BDD >> reduce: aNode [
 
 	| nodes subgraph vlist nextId |

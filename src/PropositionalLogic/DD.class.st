@@ -40,7 +40,7 @@ DD >> = other [
 ]
 
 { #category : 'algorithm' }
-DD >> apply: other [
+DD >> apply: operator with: otherDD withControllingValue: aBool [
 
 	self subclassResponsibility
 ]
@@ -168,6 +168,7 @@ DD >> visualize [
 		            node := RSGroup new.
 		            node add:
 			            (RSEllipse new size: 10; color: Color white; borderColor: Color gray; yourself).
+		            node translateBy: 0 @ -2.
 		            node add: (RSLabel new fontSize: 4; text: each literal; yourself).
 		            each literal isNumber ifFalse: [
 			            each literal ifTrue: [ node color: Color blue ].
@@ -175,10 +176,12 @@ DD >> visualize [
 		            node asShape model: each; draggable; yourself ].
 	node := RSGroup new.
 	node add: (RSEllipse new size: 10; color: Color white; borderColor: Color blue; yourself).
+	node translateBy: 0 @ -2.
 	node add: (RSLabel new fontSize: 4; text: 'F'; yourself).
 	elements add: (node asShape model: false; draggable; yourself).
 	node := RSGroup new.
 	node add: (RSEllipse new size: 10; color: Color white; borderColor: Color red; yourself).
+	node translateBy: 0 @ -2.
 	node add: (RSLabel new fontSize: 4; text: 'T'; yourself).
 	elements add: (node asShape model: true; draggable; yourself).
 	elements := elements as: RSGroup.
