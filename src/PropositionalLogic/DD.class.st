@@ -186,10 +186,10 @@ DD >> visualize [
 	elements add: (node asShape model: true; draggable; yourself).
 	elements := elements as: RSGroup.
 	canvas addAll: elements.
+	RSLineBuilder line dashed; moveBehind; canvas: canvas; width: 1; color: Color blue;
+		connectFromAll: [ :each | nodes select: [ :n | n low == each ] ].
 	RSLineBuilder line moveBehind; canvas: canvas; width: 1; color: Color red; connectFromAll: [ :each |
 			nodes select: [ :n | n high == each ] ].
-	RSLineBuilder line moveBehind; canvas: canvas; width: 1; color: Color blue; connectFromAll: [ :each |
-			nodes select: [ :n | n low == each ] ].
 	RSTreeLayout new on: elements.
 	canvas @ RSCanvasController.
 	^ canvas canvas
