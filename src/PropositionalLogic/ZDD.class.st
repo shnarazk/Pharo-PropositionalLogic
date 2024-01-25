@@ -8,8 +8,8 @@ Class {
 	#package : 'PropositionalLogic'
 }
 
-{ #category : 'initialization' }
-ZDD >> normalize [
+{ #category : 'algorithm' }
+ZDD >> reduce [
 
 	self notYetImplemented
 ]

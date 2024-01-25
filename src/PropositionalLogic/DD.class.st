@@ -12,25 +12,11 @@ Class {
 	#package : 'PropositionalLogic'
 }
 
-{ #category : 'accessing' }
-DD class >> bottom [
-	"return ⊥"
-
-	^ self new graph: DDNode bottom
-]
-
 { #category : 'instance creation' }
 DD class >> newFromAssociation: anAssociation [
 
 	<todo: 'normalize'>
 	^ self new setGraphFromAssociation: anAssociation; reduce; yourself
-]
-
-{ #category : 'accessing' }
-DD class >> top [
-	"return top"
-
-	^ self new graph: DDNode top
 ]
 
 { #category : 'comparing' }
@@ -43,12 +29,6 @@ DD >> = other [
 DD >> apply: operator with: otherDD withControllingValue: aBool [
 
 	self subclassResponsibility
-]
-
-{ #category : 'accessing' }
-DD >> bottom [
-
-	^ self class bottom
 ]
 
 { #category : 'algorithm' }
@@ -81,12 +61,6 @@ DD >> inspectionGraph [
 
 	<inspectorPresentationOrder: 10 title: 'Graph'>
 	^ SpRoassalPresenter new canvas: self visualize; yourself
-]
-
-{ #category : 'initialization' }
-DD >> normalize [
-
-	self reduce
 ]
 
 { #category : 'algorithm' }
@@ -141,12 +115,6 @@ DD >> setGraphFromAssociation: anAssociation [
 DD >> size [
 
 	^ graph allNodesSet size
-]
-
-{ #category : 'accessing' }
-DD >> top [
-
-	^ self class top
 ]
 
 { #category : 'accessing' }

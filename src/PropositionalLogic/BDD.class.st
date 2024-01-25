@@ -206,12 +206,6 @@ BDD >> compose:  x1 and: x2 [
 	self notYetImplemented
 ]
 
-{ #category : 'initialization' }
-BDD >> normalize [
-
-	self notYetImplemented
-]
-
 { #category : 'algorithm' }
 BDD >> reduce [
 

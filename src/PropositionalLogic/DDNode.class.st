@@ -11,19 +11,9 @@ Class {
 		'index',
 		'mark'
 	],
-	#classInstVars : [
-		'top',
-		'bottom'
-	],
 	#category : 'PropositionalLogic',
 	#package : 'PropositionalLogic'
 }
-
-{ #category : 'constants' }
-DDNode class >> bottom [
-
-	^ false
-]
 
 { #category : 'private' }
 DDNode class >> from: anAssociation after: anId [
@@ -50,20 +40,6 @@ DDNode class >> newFromAssociation: aTree [
 	^ self from: aTree after: 0
 ]
 
-{ #category : 'class initialization' }
-DDNode class >> reset [
-	"reset top and bottom"
-
-	top := nil.
-	bottom := nil
-]
-
-{ #category : 'constants' }
-DDNode class >> top [
-
-	^ true
-]
-
 { #category : 'converting' }
 DDNode >> allNodesSet [
 	"return the sub nodes under me as a set"
@@ -81,13 +57,7 @@ DDNode >> allNodesSet [
 	^ aSet
 ]
 
-{ #category : 'constants' }
-DDNode >> bottom [
-
-	^ self class bottom
-]
-
-{ #category : 'converting' }
+{ #category : 'private' }
 DDNode >> foldInto: aSet [
 
 	aSet add: self.
@@ -132,7 +102,7 @@ DDNode >> index: anObject [
 
 { #category : 'accessing' }
 DDNode >> literal [
-	"This field contains a integeridentifier which is unique to that vertex in the graph. It does not
+	"This field contains an integer identifier which is unique to that vertex in the graph. It does not
 	matter how the identifiers are ordered among the
 	vertices, only that they range from 1 up to the number of vertices and that they all be different."
 
@@ -220,12 +190,6 @@ DDNode >> setIndex [
 	"Then relabel to start from leaves to root"
 	nodes do: [ :each | each index: n - each index + 3].	
 	^ n
-]
-
-{ #category : 'constants' }
-DDNode >> top [
-
-	^ self class top
 ]
 
 { #category : 'accessing' }
