@@ -66,6 +66,13 @@ DDNode >> foldInto: aSet [
 	^ aSet
 ]
 
+{ #category : 'testing' }
+DDNode >> hasValue [
+    "return boolean only if self is a constant function."
+
+    ^ (low = high and: [ low isLiteral ]) ifTrue: [ low ] ifFalse: [ nil ]
+]
+
 { #category : 'accessing' }
 DDNode >> high [
 

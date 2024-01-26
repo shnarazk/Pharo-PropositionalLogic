@@ -274,21 +274,31 @@ BDD >> satisfyOne [
 	self notYetImplemented
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'algorithm - private' }
 BDD >> storeValuationsOf: aGraph to: aTable [
+    "indices are assigned in top-down order.
+    value(v) is defined only if v is a terminal vertex."
+
+    "If both v1 and v2 are treminal vertices, then v1 <op> v2 = a terminal vertex which value is value(v1) <op> value(v2).
+Otherwise at least one of them is a nonterminal vertex,"
 
     <todo: 'FIXME'>
-    | nodes operator val |
+    | nodes operator |
     operator := aTable at: 0.
-    val := operator value: false value: false.
+    "val := operator value: false value: false.
     aTable at: 1 put: (val = (operator value: false value: true) ifTrue: [ val ] ifFalse: [ nil ]).
     val := operator value: true value: false.
-    aTable at: 2 put: (val = (operator value: true value: true) ifTrue: [ val ] ifFalse: [ nil ]).
+    aTable at: 2 put: (val = (operator value: true value: true) ifTrue: [ val ] ifFalse: [ nil ])."
     nodes := aGraph allNodesSet.
     nodes := (nodes collect: [ :node | node index -> node ]) asOrderedCollection sorted.
     "Now evaluate each clause in bottom up way."
     nodes do: [ :association |
-        | index node |
+        | index node l h |
         index := association key.
-        node := association value ]
+        node := association value.
+        "sketch"
+
+        l := node low hasValue.
+        h := node high hasValue.
+        aTable at: node index put: (l ifNotNil: [ :lv | h ifNotNil: [ :hv | lv = hv ] ]) ]
 ]
