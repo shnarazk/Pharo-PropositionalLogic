@@ -9,6 +9,26 @@ Class {
 }
 
 { #category : 'examples' }
+DDBuilder class >> app1 [
+	"See Figure 7 of Randal E. Bryant, Graph-Based Algorithms for Boolean Function Manipulation,
+	IEEE Trans. en Comp., C-35-8, pp.677-691, Aug. 1986."
+
+	^ BDD newFromAssociation: 1 -> {
+			  true.
+			  (3 -> { true. false }) }
+]
+
+{ #category : 'examples' }
+DDBuilder class >> app2 [
+	"See Figure 7 of Randal E. Bryant, Graph-Based Algorithms for Boolean Function Manipulation,
+	IEEE Trans. en Comp., C-35-8, pp.677-691, Aug. 1986."
+
+	^ BDD newFromAssociation: 2 -> {
+			  false.
+			  (3 -> { false. true }) }
+]
+
+{ #category : 'examples' }
 DDBuilder class >> majority0 [
 	"See The Art of Computer Programming, Volume 4A, 7.1.4. Binary Decision Diagrams"
 

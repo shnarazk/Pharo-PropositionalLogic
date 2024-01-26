@@ -150,6 +150,12 @@ DDNode >> mark: anObject [
 	mark := anObject
 ]
 
+{ #category : 'as yet unclassified' }
+DDNode >> reindexedClone: anIntegerOffset [
+
+	^ self allNodesSet collect: [ :node | node clone index: node index + anIntegerOffset - 3; yourself ]
+]
+
 { #category : 'private' }
 DDNode >> resetIndex [
 
