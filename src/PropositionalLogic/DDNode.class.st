@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'high',
 		'low',
-		'literal',
+		'varIndex',
 		'index',
 		'mark'
 	],
@@ -26,7 +26,7 @@ DDNode class >> from: anAssociation after: anId [
 	aLiteral := anAssociation key.
 	low := anAssociation value at: 1.
 	high := anAssociation value at: 2.
-	node := self new literal: aLiteral; yourself.
+	node := self new varIndex: aLiteral; yourself.
 	node low: (low isAssociation ifTrue: [ self from: low after: aLiteral ]
 			 ifFalse: [ low ]).
 	node high: (high isAssociation ifTrue: [ self from: high after: aLiteral ]
@@ -86,7 +86,7 @@ DDNode >> high: anObject [
 	high := anObject
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 DDNode >> highIndex [
 
 	^ high isLiteral
@@ -98,30 +98,17 @@ DDNode >> highIndex [
 
 { #category : 'accessing' }
 DDNode >> index [
-
-	^ index
-]
-
-{ #category : 'accessing' }
-DDNode >> index: anObject [
-
-	index := anObject
-]
-
-{ #category : 'accessing' }
-DDNode >> literal [
     "This field contains an integer identifier which is unique to that vertex in the graph. It does not
     matter how the identifiers are ordered among the
     vertices, only that they range from 1 up to the number of vertices and that they all be different."
 
-    <todo: 'should be renamed to varIndex'>
-    ^ literal
+    ^ index
 ]
 
 { #category : 'accessing' }
-DDNode >> literal: anObject [
+DDNode >> index: anInt [
 
-	literal := anObject
+    index := anInt
 ]
 
 { #category : 'accessing' }
@@ -136,7 +123,7 @@ DDNode >> low: anObject [
 	low := anObject
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 DDNode >> lowIndex [
 
 	^ low isLiteral
@@ -159,7 +146,7 @@ DDNode >> mark: anObject [
 	mark := anObject
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'initialization' }
 DDNode >> reindexedClone: anIntegerOffset [
 
 	self allNodesSet do: [ :node | node clone index: node index + anIntegerOffset - 3 ]
@@ -210,5 +197,11 @@ DDNode >> setIndex [
 { #category : 'accessing' }
 DDNode >> varIndex [
 
-	^ literal abs
+    ^ varIndex
+]
+
+{ #category : 'accessing' }
+DDNode >> varIndex: anInt [
+
+    varIndex := anInt
 ]

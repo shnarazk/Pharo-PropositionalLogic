@@ -29,7 +29,7 @@ DDNodeTest >> testNew [
 
 	| node |
 	node := DDNode new.
-	self assert: node literal equals: nil.
+	self assert: node varIndex equals: nil.
 	self assert: node high equals: nil.
 	self assert: node low equals: nil
 ]
@@ -40,7 +40,7 @@ DDNodeTest >> testNewFromAssociation [
 	| aNode |
 	aNode := DDNode newFromAssociation:
 		         1 -> { 2 ->{  true .  false}  . 3 -> { false . true } }.
-	self assert: aNode literal equals: 1
+	self assert: aNode varIndex equals: 1
 ]
 
 { #category : 'tests' }

@@ -112,16 +112,16 @@ BDD >> apply: operator on: v1 and: v2 using: aTable [
              "create a nonterminal vertex and evaluate further down"
              w := DDNode new.
              aTable at: w put: value.
-             v1Literal := v1 isLiteral ifTrue: [ v1 ] ifFalse: [ v1 literal ].
-             v2Literal := v2 isLiteral ifTrue: [ v2 ] ifFalse: [ v2 literal ].
-             w literal: (v1 isLiteral ifTrue: [
+             v1Literal := v1 isLiteral ifTrue: [ v1 ] ifFalse: [ v1 varIndex ].
+             v2Literal := v2 isLiteral ifTrue: [ v2 ] ifFalse: [ v2 varIndex ].
+             w varIndex: (v1 isLiteral ifTrue: [
                       v2 isLiteral ifTrue: [ operator value: v1 value: v2 ] ifFalse: [ v2Literal ] ]
                       ifFalse: [
-                      v2 isLiteral ifTrue: [ v1Literal ] ifFalse: [ v1 literal min: v2 literal ] ]).
-             vlow1 := v1Literal = w literal ifTrue: [ v1 low ] ifFalse: [ v1 ].
-             vlow2 := v2Literal = w literal ifTrue: [ v2 low ] ifFalse: [ v2 ].
-             vhigh1 := v1Literal = w literal ifTrue: [ v1 high ] ifFalse: [ v1 ].
-             vhigh2 := v2Literal = w literal ifTrue: [ v2 high ] ifFalse: [ v2 ].
+                      v2 isLiteral ifTrue: [ v1Literal ] ifFalse: [ v1 varIndex min: v2 varIndex ] ]).
+             vlow1 := v1Literal = w varIndex ifTrue: [ v1 low ] ifFalse: [ v1 ].
+             vlow2 := v2Literal = w varIndex ifTrue: [ v2 low ] ifFalse: [ v2 ].
+             vhigh1 := v1Literal = w varIndex ifTrue: [ v1 high ] ifFalse: [ v1 ].
+             vhigh2 := v2Literal = w varIndex ifTrue: [ v2 high ] ifFalse: [ v2 ].
              w low: (self apply: operator on: vlow1 and: vlow2 using: aTable).
              w high: (self apply: operator on: vhigh1 and: vhigh2 using: aTable).
              w ].
@@ -145,7 +145,7 @@ BDD >> reduce: aNode [
                         yourself.
     "Put each vertex u reachable from v on list vlist[u.index]"
     vlist := nodes inject: Dictionary new into: [ :dic :node |
-                 dic at: node literal
+                 dic at: node varIndex
                      ifPresent: [ :set | set add: node ]
                      ifAbsentPut: [ OrderedCollection new add: node; yourself ]; yourself ].
     nextId := 2.

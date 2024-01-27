@@ -115,7 +115,7 @@ DD >> restrict: aVarIndex to: aBool [
     "f|_{x_i=b}"
 
     graph allNodesSet do: [ :node |
-        node literal = aVarIndex ifTrue: [
+        node varIndex = aVarIndex ifTrue: [
             aBool ifFalse: [ node low: false ] ifTrue: [ node high: true ] ] ].
     self reduce
 ]
@@ -173,7 +173,7 @@ DD >> visualize [
                         (RSEllipse new size: 10; color: Color white; borderColor: Color gray;
                                  yourself).
                     node translateBy: 0 @ -1; add:
-                            (RSLabel new fontSize: 4; text: each literal; yourself).
+                            (RSLabel new fontSize: 4; text: each varIndex; yourself).
                     node asShape model: each; draggable; yourself ].
     node := RSGroup new.
     node add: (RSEllipse new size: 10; color: Color white; borderColor: Color blue; yourself).

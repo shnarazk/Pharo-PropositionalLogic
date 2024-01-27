@@ -37,7 +37,7 @@ ZDD >> reduce: aNode [
                         yourself.
     "Put each vertex u reachable from v on list vlist[u.index]"
     vlist := nodes inject: Dictionary new into: [ :dic :node |
-                 dic at: node literal
+                 dic at: node varIndex
                      ifPresent: [ :set | set add: node ]
                      ifAbsentPut: [ OrderedCollection new add: node; yourself ]; yourself ].
     nextId := 2.
