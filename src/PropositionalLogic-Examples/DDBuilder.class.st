@@ -69,3 +69,21 @@ DDBuilder class >> sample2 [
 			  (2 -> { true. false }).
 			  (3 -> { false. true }) }
 ]
+
+{ #category : 'examples' }
+DDBuilder class >> x1x2_2 [
+	"See Figure 7 of Randal E. Bryant, Graph-Based Algorithms for Boolean Function Manipulation,
+	IEEE Trans. en Comp., C-35-8, pp.677-691, Aug. 1986."
+
+	^ BDD newFromAssociation: 1 -> {
+			  false.
+			  (2 -> { false. true }) }
+]
+
+{ #category : 'examples' }
+DDBuilder class >> x3_2 [
+    "See Figure 7 of Randal E. Bryant, Graph-Based Algorithms for Boolean Function Manipulation,
+    IEEE Trans. en Comp., C-35-8, pp.677-691, Aug. 1986."
+
+    ^ BDD newFromAssociation: 3 -> { false. true }
+]
