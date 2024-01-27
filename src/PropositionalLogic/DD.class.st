@@ -53,10 +53,16 @@ DD >> apply: anOperator unit: aBool with: other [
 ]
 
 { #category : 'algorithm' }
-DD >> compose: aBool as: other [
-	"f_1|_{x_i=f_2}"
+DD >> compose: anVarIndex as: other [
+    "f_1|_{x_i=f_2}"
 
-	self subclassResponsibility
+   self composeGraph: graph and: other graph at: anVarIndex 
+]
+
+{ #category : 'as yet unclassified' }
+DD >> composeGraph: aGraph and: otherGraph at: anVarIndex [
+
+    self subclassResponsibility
 ]
 
 { #category : 'accessing' }
@@ -105,17 +111,13 @@ DD >> reduce: aGraph [
 ]
 
 { #category : 'algorithm' }
-DD >> restrict: varIndex [
-	"f|_{x_i=b}"
+DD >> restrict: aVarIndex to: aBool [
+    "f|_{x_i=b}"
 
-	self subclassResponsibility
-]
-
-{ #category : 'algorithm' }
-DD >> restrict: varIndex to: aBool [
-	"f|_{x_i=b}"
-
-	self subclassResponsibility
+    graph allNodesSet do: [ :node |
+        node literal = aVarIndex ifTrue: [
+            aBool ifFalse: [ node low: false ] ifTrue: [ node high: true ] ] ].
+    self reduce
 ]
 
 { #category : 'evaluating' }

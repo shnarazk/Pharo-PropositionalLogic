@@ -110,11 +110,12 @@ DDNode >> index: anObject [
 
 { #category : 'accessing' }
 DDNode >> literal [
-	"This field contains an integer identifier which is unique to that vertex in the graph. It does not
-	matter how the identifiers are ordered among the
-	vertices, only that they range from 1 up to the number of vertices and that they all be different."
+    "This field contains an integer identifier which is unique to that vertex in the graph. It does not
+    matter how the identifiers are ordered among the
+    vertices, only that they range from 1 up to the number of vertices and that they all be different."
 
-	^ literal
+    <todo: 'should be renamed to varIndex'>
+    ^ literal
 ]
 
 { #category : 'accessing' }
