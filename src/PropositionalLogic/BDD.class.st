@@ -82,7 +82,8 @@ BDD >> and: other [
 
 { #category : 'algorithm - private' }
 BDD >> apply: aBlock on: v1 and: v2 withTable: aTable [
-    "recursive routine to implement apply:with:withControllingValue:"
+    "recursive routine to implement apply:with:withControllingValue:. Both of v1 and v2 are terminal or
+    non-terminal vertexes."
 
     "Second, suppose the algorithm is applied to two vertices where one, say v1, is a terminal vertex,
     and for this particular operator, value(v1) is a ""controlling"" value, i.e. either
@@ -96,85 +97,61 @@ BDD >> apply: aBlock on: v1 and: v2 withTable: aTable [
     nonterminal vertex) represents ""don’t care"". That is, if b <op> 1 = b <op> 0 = a, then b <op> X =
     a, otherwise b <op> X = X."
 
-    | operator controlling v1index v2index u value1 value2 value |
-    operator := aTable at: 1.
-    controlling := aTable at: 2.
-    self assert: v1 isLiteral not.
-    self assert: v2 isLiteral not.
-    v1index := v1 isLiteral ifTrue: [ v1 ifFalse: [ 1 ] ifTrue: [ 2 ] ] ifFalse: [ v1 index ].
-    v2index := v2 isLiteral ifTrue: [ v2 ifFalse: [ 1 ] ifTrue: [ 2 ] ] ifFalse: [ v2 index ].
-    u := aTable at: v1index @ v2index ifAbsent: [ nil ].
-    u ifNotNil: [ ^ u "have already evaluated" ].
-    u := DDNode new.
-    aTable at: v1index @ v2index put: u. "add vertex to table"
-    "u.value := v1.value <op> v2.value"
+    | operator controlling v1Index v2Index value1 value2 value u |
+    operator := aTable at: -1.
+    controlling := aTable at: 0.
+    v1Index := v1 isLiteral ifTrue: [ v1 ifFalse: [ 1 ] ifTrue: [ 2 ] ] ifFalse: [ v1 index ].
+    v2Index := v2 isLiteral ifTrue: [ v2 ifFalse: [ 1 ] ifTrue: [ 2 ] ] ifFalse: [ v2 index ].
+    aTable at: v1Index @ v2Index
+        ifPresent: [ :state | state ifNotNil: [ :evaluated | ^ evaluated "have already evaluated" ] ].
     value1 := aTable at: v1 ifAbsent: [ nil ].
     value2 := aTable at: v2 ifAbsent: [ nil ].
+    "u.value := v1.value <op> v2.value"
     value := (value1 = controlling or: [ value2 = controlling ]) ifTrue: [ controlling ]
                  ifFalse: [
                  value1 ifNotNil: [ :b1 | value2 ifNotNil: [ :b2 | operator value: b1 value: b2 ] ] ].
-    aTable at: u put: value.
-    value ifNotNil: [ "create terminal vertex" u index: (value ifFalse: [ 1 ] ifTrue: [ 2 ]) ]
-        ifNil: [
-            | vlow1 vlow2 vhigh1 vhigh2 |
-            "create nonterminal and evaluate further down"
-            u index: (v1 index min: v2 index).
-            v1 index = u index
-                ifTrue: [
-                    vlow1 := v1 low.
-                    vhigh1 := v1 high ]
-                ifFalse: [
-                    vlow1 := v1.
-                    vhigh1 := v1 ].
-            v2 index = u index
-                ifTrue: [
-                    vlow2 := v2 low.
-                    vhigh2 := v2 high ]
-                ifFalse: [
-                    vlow2 := v2.
-                    vhigh2 := v2 ].
-            u low: (self apply: aBlock on: vlow1 and: vlow2 withTable: aTable).
-            u high: (self apply: aBlock on: vlow1 and: vlow2 withTable: aTable) ].
+    u := value ifNotNil: [ "create a referrence to a value" value ] ifNil: [
+             | v1Literal v2Literal vlow1 vlow2 vhigh1 vhigh2 w |
+             w := DDNode new.
+             aTable at: w put: value.
+             "create a nonterminal vertex and evaluate further down"
+             self assert: (v1 isLiteral & v2 isLiteral) not.
+             v1Literal := v1 isLiteral ifTrue: [ v1 ] ifFalse: [ v1 literal ].
+             v2Literal := v2 isLiteral ifTrue: [ v2 ] ifFalse: [ v2 literal ].
+             w literal: (v1 isLiteral ifTrue: [ v2 literal ]
+                      ifFalse: [
+                      v2 isLiteral ifTrue: [ v1 literal ] ifFalse: [ v1 literal min: v2 literal ] ]).
+             v1Literal = w literal
+                 ifTrue: [
+                     vlow1 := v1 low.
+                     vhigh1 := v1 high ]
+                 ifFalse: [
+                     vlow1 := v1.
+                     vhigh1 := v1 ].
+             v2Literal = w literal
+                 ifTrue: [
+                     vlow2 := v2 low.
+                     vhigh2 := v2 high ]
+                 ifFalse: [
+                     vlow2 := v2.
+                     vhigh2 := v2 ].
+             w low: (self apply: aBlock on: vlow1 and: vlow2 withTable: aTable).
+             w high: (self apply: aBlock on: vlow1 and: vlow2 withTable: aTable).
+             w ].
+    aTable at: v1Index @ v2Index put: u.
     ^ u
 ]
 
 { #category : 'algorithm' }
 BDD >> apply: anOperator with: other withControllingValue: aBool [
-    "corntrollingValue should be embedded to aTable at 1 and 2"
 
     | aDict otherGraph |
-    aDict := Dictionary new at: false put: aBool; at: true put: aBool; yourself.
-    otherGraph := other graph reindexedClone: graph allNodesSet size + 1.
-    "set all v values here"
+    aDict := Dictionary new.
+    "Contract: embed anOperator at -1, aBool at 0, false at 1 and true at 2"
+    aDict at: -1 put: anOperator; at: 0 put: aBool; at: false put: false; at: true put: true.
+    otherGraph := other graph reindexedClone: graph allNodesSet size + 1; yourself.
     graph := self apply: anOperator on: graph and: otherGraph withTable: aDict.
     ^ self reduce
-    "
-    fn apply(v1: vertex, v2: vertex; op: Operator) -> vertex {
-    // Recursive routine to implement Apply
-    fn apply_step(mut T: Array<vertex>, v1: vertex; v2: vertex, op: Operator) -> vertex {
-    let mut u = T[v1.id, v2.id];
-    if u != null { return u; }    // have already evaluated
-    u = vertex::new();
-    u.mark = false;
-    T[v1.id, v2.id] = v1.value op v2.value;
-    if u.value != X {
-    // create terminal vervex
-    u.index = n + 1;
-    u.low = null; u.high = null;
-    } else {
-    u.inddex = v1.index.min(v2.index);
-    if v1.index == u.index { vlow1 = v1.low; vhigh1 = v1.hight;  } else {   vlow1 = v1; vhigh1 = v1; }
-    if v2.index == u.index {  vlow2 = v2.low; vhigh2 = v2.hight;  } else {   vlow2 = v2; vhigh2 = v2; }
-    u.low = apply_step(T, vlow1, vlow2, op);
-    u.high = apply_step(T, vhigh1, vhigh2, op);
-    }
-    u
-    }
-    let mut T: Array<vertex>[1..|G1|, 1..|G2|];
-    initialize all elements of T to null;
-    reduce(apply_step(T, v1, v2, op))
-    }
-    "
 ]
 
 { #category : 'algorithm' }
@@ -197,33 +174,37 @@ BDD >> reduce [
 
 { #category : 'algorithm - private' }
 BDD >> reduce: aNode [
+    "This is an abnormal implementation of BDD>>reduce since index order is reveresed."
 
-	| nodes subgraph vlist nextId |
-	nodes := graph setIndex; allNodesSet.
-	subgraph := (Array new: nodes size + 2 withAll: nil) at: 1 put: false; at: 2 put: true; yourself.
-	"Put each vertex u reachable from v on list vlist[u.index]"
-	vlist := nodes inject: Dictionary new into: [ :dic :node |
-		         dic at: node literal
-			         ifPresent: [ :set | set add: node ]
-			         ifAbsentPut: [ OrderedCollection new add: node; yourself ]; yourself ].
-	nextId := 2.
-	vlist keys sorted reversed do: [ :literal |
-		| q oldKey |
-		q := (vlist at: literal) inject: OrderedCollection new into: [ :c :u |
-			     u low == u high ifTrue: [ u index: u lowIndex ]
-				     ifFalse: [ c add: u lowIndex @ u highIndex -> u ].
-			     c ].
-		oldKey := nil. "unmatchable key"
-		q sorted do: [ :tmp |
-			| key u |
-			key := tmp key.
-			u := tmp value.
-			key = oldKey ifTrue: [ u index: nextId "matches existing vervex" ] ifFalse: [ "unique vertex"
-				nextId := nextId + 1.
-				u index: nextId; low: (subgraph at: u lowIndex); high: (subgraph at: u highIndex).
-				subgraph at: nextId put: u.
-				oldKey := key ] ] ].
-	^ subgraph at: aNode index
+    | nodes subgraph vlist nextId |
+    nodes := graph setIndex; allNodesSet.
+    subgraph := (Array new: nodes size + 2 withAll: nil) at: 1 put: false; at: 2 put: true;
+                        yourself.
+    "Put each vertex u reachable from v on list vlist[u.index]"
+    vlist := nodes inject: Dictionary new into: [ :dic :node |
+                 dic at: node literal
+                     ifPresent: [ :set | set add: node ]
+                     ifAbsentPut: [ OrderedCollection new add: node; yourself ]; yourself ].
+    nextId := 2.
+    vlist keys sorted reversed do: [ :literal |
+        | q oldKey |
+        q := (vlist at: literal) inject: OrderedCollection new into: [ :c :u |
+                 u low == u high ifTrue: [ u index: u lowIndex ]
+                     ifFalse: [ c add: u lowIndex @ u highIndex -> u ].
+                 c ].
+        oldKey := nil. "unmatchable key"
+        q sorted do: [ :tmp |
+            | key u |
+            key := tmp key.
+            u := tmp value.
+            key = oldKey ifTrue: [ u index: nextId "matches existing vervex" ]
+                ifFalse: [ "unique vertex"
+                    nextId := nextId + 1.
+                    u index: nextId; low: (subgraph at: u lowIndex); high:
+                            (subgraph at: u highIndex).
+                    subgraph at: nextId put: u.
+                    oldKey := key ] ] ].
+    ^ subgraph at: aNode index
 ]
 
 { #category : 'algorithm' }
