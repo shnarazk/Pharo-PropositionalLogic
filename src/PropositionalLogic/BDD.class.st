@@ -7,7 +7,7 @@ Bryant, Randal E., _Graph-Based Algorithms for Boolean Function Manipulation_ [P
 
 ## reduce
 
-```rust
+```language=text
 	fn reduce(v: vertex) -> vertex {
 		let mut subgraph: array<vertex>[1..|G|];
 		let mut vlist: array<list>[1..n+1];
@@ -26,11 +26,16 @@ Bryant, Randal E., _Graph-Based Algorithms for Boolean Function Manipulation_ [P
 			}
 			Q.sort(); // sort elements of Q by keys;
 			let mut oldkey = (-1, -1);     // unmatchable key
-			for <key, u> in Q removed in order do {  // while let Some((key, u)) = Q.pop() {  }
+			for <key, u> in Q removed in order do {
 				if key == oldkey {
 					u.id = nextid;     // matches existing vertex
-				} else {             // unique vertex
-					nextid = nextid + 1; u.id = nextid; subgraph[nextidd] = u; u.low = subgraph[u.low.id]; u.high = subgraph[u.high.id]; oldkey = key;
+				} else {              // unique vertex
+					nextid = nextid + 1;
+					u.id = nextid;
+					subgraph[nextidd] = u;
+					u.low = subgraph[u.low.id];
+					u.high = subgraph[u.high.id];
+					oldkey = key;
 				}
 			}
 		}
@@ -39,7 +44,7 @@ Bryant, Randal E., _Graph-Based Algorithms for Boolean Function Manipulation_ [P
 ```
 
 ## apply
-```
+```language=text
 	fn apply(v1: vertex, v2: vertex; op: Operator) -> vertex {
 	  // Recursive routine to implement Apply
 	  fn apply_step(mut T: Array<vertex>, v1: vertex; v2: vertex, op: Operator) -> vertex {
@@ -54,8 +59,8 @@ Bryant, Randal E., _Graph-Based Algorithms for Boolean Function Manipulation_ [P
 	      u.low = null; u.high = null;
 	    } else {
 	      u.inddex = v1.index.min(v2.index);
-	      if v1.index == u.index { vlow1 = v1.low; vhigh1 = v1.hight;  } else {   vlow1 = v1; vhigh1 = v1; }
-	      if v2.index == u.index {  vlow2 = v2.low; vhigh2 = v2.hight;  } else {   vlow2 = v2; vhigh2 = v2; }
+	      if v1.index == u.index { vlow1 = v1.low; vhigh1 = v1.hight; } else { vlow1 = v1; vhigh1 = v1; }
+	      if v2.index == u.index { vlow2 = v2.low; vhigh2 = v2.hight; } else { vlow2 = v2; vhigh2 = v2; }
 	      u.low = apply_step(T, vlow1, vlow2, op);
 	      u.high = apply_step(T, vhigh1, vhigh2, op);
 	    }
