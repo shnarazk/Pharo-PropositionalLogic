@@ -11,10 +11,10 @@ Class {
 { #category : 'tests' }
 BDDTest >> testReduce [
 
-	| bdd |
-	bdd := DDBuilder majority.
-	bdd reduce.
-	self assert: bdd size equals: 4.
-	bdd reduce.
-	self assert: bdd size equals: 4
+    | bdd |
+    bdd := DDBuilder majority2.
+    bdd reduce.
+    self assert: bdd size equals: 4.
+    bdd reduce.
+    self assert: bdd size equals: 4
 ]

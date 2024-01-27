@@ -145,9 +145,9 @@ BDD >> apply: anOperator unit: aBool with: other [
 ]
 
 { #category : 'algorithm' }
-BDD >> compose:  x1 and: x2 [
+BDD >> compose: x1 and: x2 [
 
-	self notYetImplemented
+    self notYetImplemented
 ]
 
 { #category : 'algorithm' }
@@ -219,41 +219,4 @@ BDD >> satisfyCount [
 BDD >> satisfyOne [
 
 	self notYetImplemented
-]
-
-{ #category : 'algorithm - private' }
-BDD >> storeValuationsOf: aGraph to: aTable [
-    "indices are assigned in top-down order.
-    value(v) is defined only if v is a terminal vertex."
-
-    "If both v1 and v2 are treminal vertices, then v1 <op> v2 = a terminal vertex which value is
-    value(v1) <op> value(v2).
-    Otherwise at least one of them is a nonterminal vertex,"
-
-    "Second, suppose the algorithm is applied to two vertices where one, say v1, is a terminal vertex,
-    and for this particular operator, value(v1) is a ""controlling"" value, i.e. either value(v1) <op> a
-    = 1 for all a, or 11 value(v1) <op> a = 0 for all a. For example, 1 is a controlling value for
-    either argument of OR, while 0 is a controlling value for either argument of AND. In this case,
-    there is no need to evaluate further. We simply create a terminal vertex having the appropriate
-    value."
-
-    <todo: 'FIXME'>
-    | nodes operator controllingValue |
-    operator := aTable at: 0.
-    controllingValue := aTable at: -1.
-    "val := operator value: false value: false.
-    aTable at: 1 put: (val = (operator value: false value: true) ifTrue: [ val ] ifFalse: [ nil ]).
-    val := operator value: true value: false.
-    aTable at: 2 put: (val = (operator value: true value: true) ifTrue: [ val ] ifFalse: [ nil ])."
-    nodes := aGraph allNodesSet.
-    nodes := (nodes collect: [ :node | node index -> node ]) asOrderedCollection sorted.
-    "Now evaluate each clause in bottom up way."
-    nodes do: [ :association |
-        | index node l h |
-        index := association key.
-        node := association value.
-        "sketch"
-        l := node low hasValue.
-        h := node high hasValue.
-        aTable at: node index put: (l ifNotNil: [ :lv | h ifNotNil: [ :hv | lv = hv ] ]) ]
 ]
