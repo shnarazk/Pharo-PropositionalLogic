@@ -97,43 +97,37 @@ BDD >> apply: operator on: v1 and: v2 using: aTable [
     nonterminal vertex) represents ""don’t care"". That is, if b <op> 1 = b <op> 0 = a, then b <op> X =
     a, otherwise b <op> X = X."
 
-    | controlling hashKey value1 value2 value |
+    | controlling hashKey value1 value2 value u |
     controlling := aTable at: 0.
     hashKey := (v1 isLiteral ifTrue: [ v1 ifFalse: [ 1 ] ifTrue: [ 2 ] ] ifFalse: [ v1 index ])
                @ (v2 isLiteral ifTrue: [ v2 ifFalse: [ 1 ] ifTrue: [ 2 ] ] ifFalse: [ v2 index ]).
-    aTable at: hashKey
-        ifPresent: [ :state | state ifNotNil: [ :evaluated | ^ evaluated "have already evaluated" ] ].
+    aTable at: hashKey ifPresent: [ :node | node ifNotNil: [ ^ node "have already evaluated" ] ].
     value1 := aTable at: v1 ifAbsent: [ nil ].
     value2 := aTable at: v2 ifAbsent: [ nil ].
     "u.value := v1.value <op> v2.value"
     value := (value1 = controlling or: [ value2 = controlling ]) ifTrue: [ controlling ]
                  ifFalse: [
                  value1 ifNotNil: [ value2 ifNotNil: [ operator value: value1 value: value2 ] ] ].
-    ^ value
-          ifNotNil: [ "create a referrence to a value"
-              aTable at: hashKey put: value.
-              value ]
-          ifNil: [
-              | v1Literal v2Literal vlow1 vlow2 vhigh1 vhigh2 w |
-              "create a nonterminal vertex and evaluate further down"
-              w := DDNode new.
-              "store it before recursion"
-              aTable at: hashKey put: w.
-              aTable at: w put: value.
-              "self assert: (v1 isLiteral & v2 isLiteral) not."
-              v1Literal := v1 isLiteral ifTrue: [ v1 ] ifFalse: [ v1 literal ].
-              v2Literal := v2 isLiteral ifTrue: [ v2 ] ifFalse: [ v2 literal ].
-              w literal: (v1 isLiteral ifTrue: [
-                       v2 isLiteral ifTrue: [ operator value: v1 value: v2 ] ifFalse: [ v2Literal ] ]
-                       ifFalse: [
-                       v2 isLiteral ifTrue: [ v1Literal ] ifFalse: [ v1 literal min: v2 literal ] ]).
-              vlow1 := v1Literal = w literal ifTrue: [ v1 low ] ifFalse: [ v1 ].
-              vlow2 := v2Literal = w literal ifTrue: [ v2 low ] ifFalse: [ v2 ].
-              vhigh1 := v1Literal = w literal ifTrue: [ v1 high ] ifFalse: [ v1 ].
-              vhigh2 := v2Literal = w literal ifTrue: [ v2 high ] ifFalse: [ v2 ].
-              w low: (self apply: operator on: vlow1 and: vlow2 using: aTable).
-              w high: (self apply: operator on: vhigh1 and: vhigh2 using: aTable).
-              w ]
+    u := value ifNil: [
+             | v1Literal v2Literal vlow1 vlow2 vhigh1 vhigh2 w |
+             "create a nonterminal vertex and evaluate further down"
+             w := DDNode new.
+             aTable at: w put: value.
+             v1Literal := v1 isLiteral ifTrue: [ v1 ] ifFalse: [ v1 literal ].
+             v2Literal := v2 isLiteral ifTrue: [ v2 ] ifFalse: [ v2 literal ].
+             w literal: (v1 isLiteral ifTrue: [
+                      v2 isLiteral ifTrue: [ operator value: v1 value: v2 ] ifFalse: [ v2Literal ] ]
+                      ifFalse: [
+                      v2 isLiteral ifTrue: [ v1Literal ] ifFalse: [ v1 literal min: v2 literal ] ]).
+             vlow1 := v1Literal = w literal ifTrue: [ v1 low ] ifFalse: [ v1 ].
+             vlow2 := v2Literal = w literal ifTrue: [ v2 low ] ifFalse: [ v2 ].
+             vhigh1 := v1Literal = w literal ifTrue: [ v1 high ] ifFalse: [ v1 ].
+             vhigh2 := v2Literal = w literal ifTrue: [ v2 high ] ifFalse: [ v2 ].
+             w low: (self apply: operator on: vlow1 and: vlow2 using: aTable).
+             w high: (self apply: operator on: vhigh1 and: vhigh2 using: aTable).
+             w ].
+    aTable at: hashKey put: u.
+    ^ u
 ]
 
 { #category : 'algorithm' }
@@ -141,23 +135,6 @@ BDD >> apply: anOperator unit: aBool with: other [
 
     | aDict otherGraph |
     "Contract: embed anOperator at -1, aBool at 0, false at 1 and true at 2"
-    aDict := Dictionary new at: 0 put: aBool; at: false put: false; at: true put: true; yourself.
-    otherGraph := other graph reindexedClone: graph allNodesSet size + 1; yourself.
-    graph := self apply: anOperator
-                 on: graph
-                 and: otherGraph
-                 using: aDict.
-    ^ self reduce
-]
-
-{ #category : 'algorithm' }
-BDD >> apply: anOperator with: other withControllingValue: aBool [
-
-    | aDict otherGraph |
-    "Contract: embed anOperator at -1, aBool at 0, false at 1 and true at 2"
-    self deprecated: 'Use apply:unit:with: instead of current one'
-        on: '27 January 2024'
-        in: 'Pharo-12.0.0+SNAPSHOT.build.1320.sha.a60c7183da2042a3dd57827d59a15a5b4671b5c6 (64 Bit)'.
     aDict := Dictionary new at: 0 put: aBool; at: false put: false; at: true put: true; yourself.
     otherGraph := other graph reindexedClone: graph allNodesSet size + 1; yourself.
     graph := self apply: anOperator
