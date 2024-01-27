@@ -75,20 +75,14 @@ Bryant, Randal E., _Graph-Based Algorithms for Boolean Function Manipulation_ [P
 Class {
 	#name : 'BDD',
 	#superclass : 'DD',
-	#category : 'PropositionalLogic',
-	#package : 'PropositionalLogic'
+	#category : 'PropositionalLogic-DecisionDiagram',
+	#package : 'PropositionalLogic',
+	#tag : 'DecisionDiagram'
 }
-
-{ #category : 'algorithm' }
-BDD >> and: other [
-
-    ^ self apply: [ :a :b | a & b ] unit: false with: other
-]
 
 { #category : 'algorithm - private' }
 BDD >> apply: operator on: v1 and: v2 using: aTable [
-    "recursive routine to implement apply:with:withControllingValue:. Both of v1 and v2 are terminal or
-    non-terminal vertexes."
+    "recursive routine to implement apply:unit:with:. Both of v1 and v2 are non-terminal vertexes."
 
     "Second, suppose the algorithm is applied to two vertices where one, say v1, is a terminal vertex,
     and for this particular operator, value(v1) is a ""controlling"" value, i.e. either
@@ -136,29 +130,9 @@ BDD >> apply: operator on: v1 and: v2 using: aTable [
 ]
 
 { #category : 'algorithm' }
-BDD >> apply: anOperator unit: aBool with: other [
-
-    | aDict otherGraph |
-    "Contract: embed anOperator at -1, aBool at 0, false at 1 and true at 2"
-    aDict := Dictionary new at: 0 put: aBool; at: false put: false; at: true put: true; yourself.
-    otherGraph := other graph reindexedClone: graph allNodesSet size + 1; yourself.
-    graph := self apply: anOperator
-                 on: graph
-                 and: otherGraph
-                 using: aDict.
-    ^ self reduce
-]
-
-{ #category : 'algorithm' }
 BDD >> compose: x1 and: x2 [
 
     self notYetImplemented
-]
-
-{ #category : 'algorithm' }
-BDD >> or: other [
-
-	^ self apply: [ :a :b | a | b ] unit: true with: other
 ]
 
 { #category : 'algorithm - private' }
@@ -186,6 +160,7 @@ BDD >> reduce: aNode [
             | key u |
             key := tmp key.
             u := tmp value.
+            self assert: u low ~= u high description: 'this should be deleted'.
             key = oldKey ifTrue: [ u index: nextId "matches existing vervex" ]
                 ifFalse: [ "unique vertex"
                     nextId := nextId + 1.

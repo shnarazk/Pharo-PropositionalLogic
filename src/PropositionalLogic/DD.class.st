@@ -8,8 +8,9 @@ Class {
 	#instVars : [
 		'graph'
 	],
-	#category : 'PropositionalLogic',
-	#package : 'PropositionalLogic'
+	#category : 'PropositionalLogic-DecisionDiagram',
+	#package : 'PropositionalLogic',
+	#tag : 'DecisionDiagram'
 }
 
 { #category : 'instance creation' }
@@ -25,10 +26,30 @@ DD >> = other [
 	^ graph = other graph
 ]
 
-{ #category : 'algorithm' }
-DD >> apply: operator with: otherDD withControllingValue: aBool [
+{ #category : 'composing' }
+DD >> and: other [
 
-	self subclassResponsibility
+    ^ self apply: [ :a :b | a & b ] unit: false with: other
+]
+
+{ #category : 'algorithm - private' }
+DD >> apply: operator on: aGraph and: otherGraph using: aTable [
+
+    self subclassResponsibility
+]
+
+{ #category : 'algorithm' }
+DD >> apply: anOperator unit: aBool with: other [
+
+    | aDict otherGraph |
+    "Contract: embed anOperator at -1, aBool at 0, false at 1 and true at 2"
+    aDict := Dictionary new at: 0 put: aBool; at: false put: false; at: true put: true; yourself.
+    otherGraph := other graph reindexedClone: graph allNodesSet size + 1; yourself.
+    graph := self apply: anOperator
+                 on: graph
+                 and: otherGraph
+                 using: aDict.
+    ^ self "reduce"
 ]
 
 { #category : 'algorithm' }
@@ -63,6 +84,12 @@ DD >> inspectionGraph [
 	^ SpRoassalPresenter new canvas: self visualize; yourself
 ]
 
+{ #category : 'composing' }
+DD >> or: other [
+
+	^ self apply: [ :a :b | a | b ] unit: true with: other
+]
+
 { #category : 'algorithm' }
 DD >> reduce [
     "reduce to canonical form"
@@ -70,7 +97,7 @@ DD >> reduce [
     self reduce: graph
 ]
 
-{ #category : 'algorithm' }
+{ #category : 'algorithm - private' }
 DD >> reduce: aGraph [
     "reduce to canonical form"
 

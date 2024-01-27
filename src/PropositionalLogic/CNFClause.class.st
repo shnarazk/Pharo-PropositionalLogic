@@ -4,8 +4,9 @@ Clause including empty and unit ones
 Class {
 	#name : 'CNFClause',
 	#superclass : 'CNF',
-	#category : 'PropositionalLogic',
-	#package : 'PropositionalLogic'
+	#category : 'PropositionalLogic-Satisfiability',
+	#package : 'PropositionalLogic',
+	#tag : 'Satisfiability'
 }
 
 { #category : 'accessing' }

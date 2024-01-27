@@ -7,8 +7,9 @@ Class {
 	#instVars : [
 		'clauses'
 	],
-	#category : 'PropositionalLogic',
-	#package : 'PropositionalLogic'
+	#category : 'PropositionalLogic-Satisfiability',
+	#package : 'PropositionalLogic',
+	#tag : 'Satisfiability'
 }
 
 { #category : 'testing' }

@@ -11,8 +11,9 @@ Class {
 		'index',
 		'mark'
 	],
-	#category : 'PropositionalLogic',
-	#package : 'PropositionalLogic'
+	#category : 'PropositionalLogic-DecisionDiagram',
+	#package : 'PropositionalLogic',
+	#tag : 'DecisionDiagram'
 }
 
 { #category : 'private' }

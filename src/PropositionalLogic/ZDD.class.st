@@ -4,11 +4,31 @@ Zero-suppressed Decision Diagram
 Class {
 	#name : 'ZDD',
 	#superclass : 'DD',
-	#category : 'PropositionalLogic',
-	#package : 'PropositionalLogic'
+	#category : 'PropositionalLogic-DecisionDiagram',
+	#package : 'PropositionalLogic',
+	#tag : 'DecisionDiagram'
 }
 
-{ #category : 'algorithm' }
+{ #category : 'algorithm - private' }
+ZDD >> apply: operator on: v1 and: v2 using: aTable [
+    "recursive routine to implement apply:base:with::. Both of v1 and v2 are non-terminal vertexes."
+
+    "Second, suppose the algorithm is applied to two vertices where one, say v1, is a terminal vertex,
+    and for this particular operator, value(v1) is a ""controlling"" value, i.e. either
+    value(v1) <op> a = 1 for all a, or value(v1) <op> a = 0 for all a. For example, 1 is a controlling
+    value for either argument of OR, while 0 is a controlling value for either argument of AND. In this
+    case, there is no need to evaluate further. We simply create a terminal vertex having the
+    appropriate value."
+
+    "To detect whether one of the two vertices contains a controlling value for the operator, we evaluate
+    the expression v1.value <op> v2.value using a three-valued algebra where X (the value at any
+    nonterminal vertex) represents ""don’t care"". That is, if b <op> 1 = b <op> 0 = a, then b <op> X =
+    a, otherwise b <op> X = X."
+
+    self notYetImplemented
+]
+
+{ #category : 'algorithm - private' }
 ZDD >> reduce: aNode [
 
     | nodes subgraph vlist nextId |
