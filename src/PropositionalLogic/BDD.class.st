@@ -161,12 +161,6 @@ BDD >> or: other [
 	^ self apply: [ :a :b | a | b ] unit: true with: other
 ]
 
-{ #category : 'algorithm' }
-BDD >> reduce [
-
-	self reduce: graph
-]
-
 { #category : 'algorithm - private' }
 BDD >> reduce: aNode [
     "This is an abnormal implementation of BDD>>reduce since index order is reveresed."

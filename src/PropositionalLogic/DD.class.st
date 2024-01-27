@@ -65,9 +65,16 @@ DD >> inspectionGraph [
 
 { #category : 'algorithm' }
 DD >> reduce [
-	"reduce to canonical form"
+    "reduce to canonical form"
 
-	self subclassResponsibility
+    self reduce: graph
+]
+
+{ #category : 'algorithm' }
+DD >> reduce: aGraph [
+    "reduce to canonical form"
+
+    self subclassResponsibility
 ]
 
 { #category : 'algorithm' }
