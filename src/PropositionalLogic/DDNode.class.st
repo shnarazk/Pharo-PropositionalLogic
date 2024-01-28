@@ -7,9 +7,7 @@ Class {
 	#instVars : [
 		'high',
 		'low',
-		'varIndex',
-		'index',
-		'mark'
+		'varIndex'
 	],
 	#category : 'PropositionalLogic-DecisionDiagram',
 	#package : 'PropositionalLogic',
@@ -43,19 +41,19 @@ DDNode class >> newFromAssociation: aTree [
 
 { #category : 'converting' }
 DDNode >> allNodesSet [
-	"return the sub nodes under me as a set"
+    "return the subnodes under me as a set"
 
-	| queue aSet |
-	queue := OrderedCollection new.
-	aSet := Set  new.
-	queue addLast: self.
-	[ 0 < queue size ] whileTrue: [
-		| node |
-		node := queue removeFirst.
-		aSet add: node.
-		node low isLiteral ifFalse: [ queue addLast: node low ].
-		node high isLiteral ifFalse: [ queue addLast: node high ] ].
-	^ aSet
+    | queue aSet |
+    queue := OrderedCollection new.
+    aSet := Set new.
+    queue addLast: self.
+    [ 0 < queue size ] whileTrue: [
+        | node |
+        node := queue removeFirst.
+        aSet add: node.
+        node low isLiteral ifFalse: [ queue addLast: node low ].
+        node high isLiteral ifFalse: [ queue addLast: node high ] ].
+    ^ aSet
 ]
 
 { #category : 'private' }
@@ -65,13 +63,6 @@ DDNode >> foldInto: aSet [
 	low ifNotNil: [ low foldInto: aSet ].
 	high ifNotNil: [ high foldInto: aSet ].
 	^ aSet
-]
-
-{ #category : 'testing' }
-DDNode >> hasValue [
-    "return boolean only if self is a constant function."
-
-    ^ (low = high and: [ low isLiteral ]) ifTrue: [ low ] ifFalse: [ nil ]
 ]
 
 { #category : 'accessing' }
@@ -87,31 +78,6 @@ DDNode >> high: anObject [
 ]
 
 { #category : 'accessing' }
-DDNode >> highIndex [
-
-	^ high isLiteral
-		  ifTrue: [
-			  high ifFalse: [ 1 ]
-				  ifTrue: [ 2 ] ]
-		  ifFalse: [ high index ]
-]
-
-{ #category : 'accessing' }
-DDNode >> index [
-    "This field contains an integer identifier which is unique to that vertex in the graph. It does not
-    matter how the identifiers are ordered among the
-    vertices, only that they range from 1 up to the number of vertices and that they all be different."
-
-    ^ index
-]
-
-{ #category : 'accessing' }
-DDNode >> index: anInt [
-
-    index := anInt
-]
-
-{ #category : 'accessing' }
 DDNode >> low [
 
 	^ low
@@ -121,77 +87,6 @@ DDNode >> low [
 DDNode >> low: anObject [
 
 	low := anObject
-]
-
-{ #category : 'accessing' }
-DDNode >> lowIndex [
-
-	^ low isLiteral
-		  ifTrue: [
-			  low ifFalse: [ 1 ]
-				  ifTrue: [ 2 ] ]
-		  ifFalse: [ low index ]
-]
-
-{ #category : 'accessing' }
-DDNode >> mark [
-	"This is used to mark which vertices have been visited during a traversal of the graph."
-
-	^ mark
-]
-
-{ #category : 'accessing' }
-DDNode >> mark: anObject [
-
-	mark := anObject
-]
-
-{ #category : 'initialization' }
-DDNode >> reindexedClone: anIntegerOffset [
-
-	self allNodesSet do: [ :node | node clone index: node index + anIntegerOffset - 3 ]
-]
-
-{ #category : 'private' }
-DDNode >> resetIndex [
-
-	| queue |
-	queue := OrderedCollection new.
-	queue addLast: self.
-	[ 0 < queue size ] whileTrue: [
-		| node |
-		node := queue removeFirst.
-		node index: nil.
-		self assert: node low isNotNil description: 'low must point to another node or a boolean'.
-		self assert: node high isNotNil description: 'high must point to another node or a boolean'.
-		node low isLiteral ifFalse: [ queue addLast: node low ].
-		node high isLiteral ifFalse: [ queue addLast: node high ] ]
-]
-
-{ #category : 'initialization' }
-DDNode >> setIndex [
-	"assign an integer to each non-terminal node in width-first order. and return the last used index"
-
-	| n queue nodes |
-	"For a graph, not a tree, we have to traverse each node once at most. So reset them to nil first."
-	self resetIndex.
-	"assign 1 to the terminal node false, and 2 to the terminal node true,"
-	n := 2.
-	queue := OrderedCollection new.
-	nodes := Set new.
-	queue addLast: self.
-	[ 0 < queue size ] whileTrue: [
-		| node |
-		node := queue removeFirst.
-		node index ifNil: [
-			n := n + 1.
-			node index: n.
-			nodes add: node.
-			node low isLiteral ifFalse: [ queue addLast: node low ].
-			node high isLiteral ifFalse: [ queue addLast: node high ] ] ].
-	"Then relabel to start from leaves to root"
-	nodes do: [ :each | each index: n - each index + 3].	
-	^ n
 ]
 
 { #category : 'accessing' }

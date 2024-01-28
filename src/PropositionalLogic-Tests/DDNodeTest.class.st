@@ -21,7 +21,7 @@ DDNodeTest >> setUp [
 			          (2 -> {
 				           (3 -> { false. true }).
 				           true }) }) graph.
-	graph setIndex
+
 ]
 
 { #category : 'tests' }
@@ -41,17 +41,4 @@ DDNodeTest >> testNewFromAssociation [
 	aNode := DDNode newFromAssociation:
 		         1 -> { 2 ->{  true .  false}  . 3 -> { false . true } }.
 	self assert: aNode varIndex equals: 1
-]
-
-{ #category : 'tests' }
-DDNodeTest >> testSetIndex [
-
-	| nodes indices |
-	graph setIndex.
-	nodes := graph allNodesSet.
-	indices := nodes collect: [ :each | each index ].
-	self assert: graph index equals: nodes size + 2.
-	(1 to: nodes size) allSatisfy: [ :each | nodes includes: each ].
-	self assert: (nodes allSatisfy: [ :node | node index > node lowIndex ]).
-	self assert: (nodes allSatisfy: [ :node | node index > node highIndex ])
 ]

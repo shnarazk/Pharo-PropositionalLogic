@@ -81,7 +81,7 @@ Class {
 }
 
 { #category : 'algorithm - private' }
-BDD >> apply: operator on: v1 and: v2 using: aTable [
+BDD >> apply: operator on: v1 and: v2 indexed: index using: aTable [
     "recursive routine to implement apply:unit:with:. Both of v1 and v2 are non-terminal vertexes."
 
     "Second, suppose the algorithm is applied to two vertices where one, say v1, is a terminal vertex,
@@ -98,7 +98,7 @@ BDD >> apply: operator on: v1 and: v2 using: aTable [
 
     | controlling hashKey value1 value2 value u |
     controlling := aTable at: 0.
-    hashKey := self @- v1 @ (self @- v2).
+    hashKey := (index at: v1) @ (index at: v2).
     aTable at: hashKey ifPresent: [ :node | node ifNotNil: [ ^ node "have already evaluated" ] ].
     value1 := aTable at: v1 ifAbsent: [ nil ].
     value2 := aTable at: v2 ifAbsent: [ nil ].
@@ -121,15 +121,15 @@ BDD >> apply: operator on: v1 and: v2 using: aTable [
              vlow2 := v2Literal = w varIndex ifTrue: [ v2 low ] ifFalse: [ v2 ].
              vhigh1 := v1Literal = w varIndex ifTrue: [ v1 high ] ifFalse: [ v1 ].
              vhigh2 := v2Literal = w varIndex ifTrue: [ v2 high ] ifFalse: [ v2 ].
-             w low: (self apply: operator on: vlow1 and: vlow2 using: aTable).
-             w high: (self apply: operator on: vhigh1 and: vhigh2 using: aTable).
+             w low: (self apply: operator on: vlow1 and: vlow2 indexed: index using: aTable).
+             w high: (self apply: operator on: vhigh1 and: vhigh2 indexed: index using: aTable).
              w ].
     aTable at: hashKey put: u.
     ^ u
 ]
 
 { #category : 'algorithm - private' }
-BDD >> composeGraphLow: nodeLow high: nodeHigh and: otherNode using: aDict [
+BDD >> composeGraphLow: nodeLow high: nodeHigh and: otherNode indexed: index using: aDict [
     "Recursive routine to implement BDD>>compose:and:at:"
 
     | vlow1 vhigh1 value nodes hashKey |
@@ -139,7 +139,7 @@ BDD >> composeGraphLow: nodeLow high: nodeHigh and: otherNode using: aDict [
     vlow1 varIndex = (aDict at: 0) ifTrue: [ vlow1 := vlow1 low ].
     vhigh1 varIndex = (aDict at: 0) ifTrue: [ vhigh1 := vhigh1 high ].
     "Apply operation IfThenElse"
-    hashKey := nodes collect: [ :each | self @- each ].
+    hashKey := nodes collect: [ :each | index at: each ].
     aDict at: hashKey ifAbsent: [ :evaluated | "have already evaluaeted" ^ evaluated ].
     value := aDict at: otherNode ifPresent: [ :b2 |
                  aDict at: vlow1
@@ -177,7 +177,7 @@ BDD >> reduce: aNode [
     "This is an abnormal implementation of BDD>>reduce since index order is reveresed."
 
     | nodes subgraph vlist nextId index |
-    nodes := graph setIndex; allNodesSet.
+    nodes := graph allNodesSet. "setIndex;"
     "mapping from node to index"
     index := IdentityDictionary newFrom:
                  (nodes asArray withIndexCollect: [ :node :i | node -> (i + 2) ]).
@@ -195,7 +195,7 @@ BDD >> reduce: aNode [
         q := (vlist at: literal) inject: OrderedCollection new
                  into: [ :c :u | "value equivaleny is required"
                      u low = u high ifTrue: [ index at: u put: (index at: u low) ]
-                         ifFalse: [ c add: u lowIndex @ u highIndex -> u ].
+                         ifFalse: [ c add: (index at: u low) @ (index at: u high) -> u ].
                      c ].
         oldKey := nil. "unmatchable key"
         q sorted do: [ :tmp |

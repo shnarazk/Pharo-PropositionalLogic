@@ -26,14 +26,6 @@ DD >> = other [
 	^ graph = other graph
 ]
 
-{ #category : 'accessing' }
-DD >> @- aNode [
-    "The reverse of '@' returning integer index of aNode. If aNode is false(true) as a terminal vertex,
-    return 1(2)."
-
-    ^ aNode isLiteral ifTrue: [ aNode ifFalse: [ 1 ] ifTrue: [ 2 ] ] ifFalse: [ aNode index ]
-]
-
 { #category : 'composing' }
 DD >> and: other [
 
@@ -41,7 +33,7 @@ DD >> and: other [
 ]
 
 { #category : 'algorithm - private' }
-DD >> apply: operator on: aGraph and: otherGraph using: aTable [
+DD >> apply: operator on: aGraph and: otherGraph indexed: index using: aTable [
 
     self subclassResponsibility
 ]
@@ -49,13 +41,19 @@ DD >> apply: operator on: aGraph and: otherGraph using: aTable [
 { #category : 'algorithm' }
 DD >> apply: anOperator unit: aBool with: other [
 
-    | aDict otherGraph |
+    | index aDict |
+    "mapping from terminal and nonterminal node to index"
+    index := Dictionary newFrom:
+                 ((graph allNodesSet inject: other graph allNodesSet
+                       into: [ :set :node | set add: node; yourself ]) asOrderedCollection
+                      withIndexCollect: [ :node :i | node -> (i + 2) ]).
+    index at: false put: 1; at: true put: 2.
     "Contract: embed anOperator at -1, aBool at 0, false at 1 and true at 2"
     aDict := Dictionary new at: 0 put: aBool; at: false put: false; at: true put: true; yourself.
-    otherGraph := other graph reindexedClone: graph allNodesSet size + 1; yourself.
     graph := self apply: anOperator
                  on: graph
-                 and: otherGraph
+                 and: other graph
+                 indexed: index
                  using: aDict.
     ^ self reduce
 ]
@@ -64,13 +62,29 @@ DD >> apply: anOperator unit: aBool with: other [
 DD >> compose: anVarIndex as: other [
     "f_1|_{x_i=f_2}"
 
-    | aDict otherGraph |
+    | index aDict otherGraph |
+    "mapping from terminal and nonterminal node to index"
+    index := Dictionary newFrom:
+                 ((graph allNodesSet inject: other graph allNodesSet
+                       into: [ :set :node | set add: node; yourself ]) asOrderedCollection
+                      withIndexCollect: [ :i :node | node -> (i + 2) ]).
+    index at: 1 put: false; at: 2 put: true.
     "Contract: embed anVarIndex at 0, false at 1 and true at 2"
     aDict := Dictionary new at: 0 put: anVarIndex; at: false put: false; at: true put: true;
                      yourself.
     otherGraph := other graph reindexedClone: graph allNodesSet size + 1; yourself.
-    graph := self composeGraphLow: graph high: graph and: otherGraph using: aDict.
+    graph := self composeGraphLow: graph
+                 high: graph
+                 and: otherGraph
+                 indexed: index
+                 using: aDict.
     ^ self reduce
+]
+
+{ #category : 'algorithm - private' }
+DD >> composeGraphLow: vlow1 high: vhigh1 and: v2 indexed: index using: aTable [
+
+    self subclassResponsibility
 ]
 
 { #category : 'algorithm - private' }
