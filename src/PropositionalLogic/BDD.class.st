@@ -176,10 +176,14 @@ BDD >> composeGraphLow: nodeLow high: nodeHigh and: otherNode using: aDict [
 BDD >> reduce: aNode [
     "This is an abnormal implementation of BDD>>reduce since index order is reveresed."
 
-    | nodes subgraph vlist nextId |
+    | nodes subgraph vlist nextId index |
     nodes := graph setIndex; allNodesSet.
-    subgraph := (Array new: nodes size + 2 withAll: nil) at: 1 put: false; at: 2 put: true;
-                        yourself.
+    "mapping from node to index"
+    index := IdentityDictionary newFrom:
+                 (nodes asArray withIndexCollect: [ :node :i | node -> (i + 2) ]).
+    index at: false put: 1; at: true put: 2.
+    "mapping to node from index"
+    subgraph := (Array new: nodes size + 2) at: 1 put: false; at: 2 put: true; yourself.
     "Put each vertex u reachable from v on list vlist[u.index]"
     vlist := nodes inject: Dictionary new into: [ :dic :node |
                  dic at: node varIndex
@@ -188,24 +192,26 @@ BDD >> reduce: aNode [
     nextId := 2.
     vlist keys sorted reversed do: [ :literal |
         | q oldKey |
-        q := (vlist at: literal) inject: OrderedCollection new into: [ :c :u |
-                 u low == u high ifTrue: [ u index: u lowIndex ]
-                     ifFalse: [ c add: u lowIndex @ u highIndex -> u ].
-                 c ].
+        q := (vlist at: literal) inject: OrderedCollection new
+                 into: [ :c :u | "value equivaleny is required"
+                     u low = u high ifTrue: [ index at: u put: (index at: u low) ]
+                         ifFalse: [ c add: u lowIndex @ u highIndex -> u ].
+                     c ].
         oldKey := nil. "unmatchable key"
         q sorted do: [ :tmp |
             | key u |
             key := tmp key.
             u := tmp value.
             self assert: u low ~= u high description: 'this should be deleted'.
-            key = oldKey ifTrue: [ u index: nextId "matches existing vervex" ]
+            key = oldKey ifTrue: [ index at: u put: nextId "matches existing vervex" ]
                 ifFalse: [ "unique vertex"
                     nextId := nextId + 1.
-                    u index: nextId; low: (subgraph at: u lowIndex); high:
-                            (subgraph at: u highIndex).
+                    u low: (subgraph at: (index at: u low)).
+                    u high: (subgraph at: (index at: u high)).
+                    index at: u put: nextId.
                     subgraph at: nextId put: u.
                     oldKey := key ] ] ].
-    ^ subgraph at: aNode index
+    ^ subgraph at: (index at: aNode)
 ]
 
 { #category : 'algorithm' }

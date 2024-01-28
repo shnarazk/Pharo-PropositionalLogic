@@ -1,3 +1,11 @@
+"
+```
+Metacello new
+  baseline: 'PropositionalLogic';
+  repository: 'github://shnarazk/Pharo-PropositionalLogic:main';
+  load
+```
+"
 Class {
 	#name : 'BaselineOfPropositionalLogic',
 	#superclass : 'BaselineOf',
