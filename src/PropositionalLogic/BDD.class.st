@@ -144,15 +144,15 @@ BDD >> composeGraphLow: nodeLow high: nodeHigh and: otherNode withMapping: aMapp
     vlow1 := nodeLow.
     vhigh1 := nodeHigh.
     nodes := OrderedCollection new add: vlow1; add: vhigh1; add: otherNode; yourself.
-    vlow1 varIndex = (values at: 0) ifTrue: [ vlow1 := vlow1 low ].
-    vhigh1 varIndex = (values at: 0) ifTrue: [ vhigh1 := vhigh1 high ].
+    vlow1 isLiteral ifFalse: [ vlow1 varIndex = (values at: 0) ifTrue: [ vlow1 := vlow1 low ] ].
+    vhigh1 isLiteral ifFalse: [ vhigh1 varIndex = (values at: 0) ifTrue: [ vhigh1 := vhigh1 high ] ].
     "Apply operation IfThenElse"
     hashKey := nodes collect: [ :each | aMapping at: each ].
-    aMapping at: hashKey ifAbsent: [ :evaluated | "have already evaluaeted" ^ evaluated ].
-    value := aMapping at: otherNode ifPresent: [ :b2 |
-                 aMapping at: vlow1
+    aMapping at: hashKey ifPresent: [ :evaluated | "have already evaluaeted" ^ evaluated ].
+    value := values at: otherNode ifPresent: [ :b2 |
+                 values at: vlow1
                      ifPresent: [ :bl |
-                     aMapping at: vhigh1 ifPresent: [ :bh | b2 not & bl | (b2 & bh) ] ] ].
+                     values at: vhigh1 ifPresent: [ :bh | b2 not & bl | (b2 & bh) ] ] ].
     ^ value
           ifNotNil: [
               aMapping at: hashKey put: value. "add vertex to table"
@@ -169,14 +169,36 @@ BDD >> composeGraphLow: nodeLow high: nodeHigh and: otherNode withMapping: aMapp
                                       ifFalse: [ node varIndex min: vi ] ] ].
               self assert: varIndex ~= 0 description: 'invaild varIndex for new node'.
               u varIndex: varIndex.
-              vll1 := vlow1 varIndex = varIndex ifTrue: [ vlow1 low ] ifFalse: [ vlow1 ].
-              vlh1 := vlow1 varIndex = varIndex ifTrue: [ vlow1 high ] ifFalse: [ vlow1 ].
-              vhl1 := vhigh1 varIndex = varIndex ifTrue: [ vhigh1 low ] ifFalse: [ vhigh1 ].
-              vhh1 := vhigh1 varIndex = varIndex ifTrue: [ vhigh1 high ] ifFalse: [ vhigh1 ].
-              vl2 := otherNode varIndex = varIndex ifTrue: [ otherNode low ] ifFalse: [ otherNode ].
-              vh2 := otherNode varIndex = varIndex ifTrue: [ otherNode high ] ifFalse: [ otherNode ].
-              u low: (self composeGraphLow: vll1 high: vhl1 and: vl2 using: aMapping).
-              u high: (self composeGraphLow: vlh1 high: vhh1 and: vh2 using: aMapping).
+              vll1 := vlow1 isLiteral ifTrue: [ vlow1 ]
+                          ifFalse: [
+                          vlow1 varIndex = varIndex ifTrue: [ vlow1 low ] ifFalse: [ vlow1 ] ].
+              vlh1 := vlow1 isLiteral ifTrue: [ vlow1 ]
+                          ifFalse: [
+                          vlow1 varIndex = varIndex ifTrue: [ vlow1 high ] ifFalse: [ vlow1 ] ].
+              vhl1 := vhigh1 isLiteral ifTrue: [ vhigh1 ]
+                          ifFalse: [
+                          vhigh1 varIndex = varIndex ifTrue: [ vhigh1 low ] ifFalse: [ vhigh1 ] ].
+              vhh1 := vhigh1 isLiteral ifTrue: [ vhigh1 ]
+                          ifFalse: [
+                          vhigh1 varIndex = varIndex ifTrue: [ vhigh1 high ] ifFalse: [ vhigh1 ] ].
+              vl2 := otherNode isLiteral ifTrue: [ otherNode ]
+                         ifFalse: [
+                         otherNode varIndex = varIndex ifTrue: [ otherNode low ]
+                             ifFalse: [ otherNode ] ].
+              vh2 := otherNode isLiteral ifTrue: [ otherNode ]
+                         ifFalse: [
+                         otherNode varIndex = varIndex ifTrue: [ otherNode high ]
+                             ifFalse: [ otherNode ] ].
+              u low: (self composeGraphLow: vll1
+                       high: vhl1
+                       and: vl2
+                       withMapping: aMapping
+                       withValue: values).
+              u high: (self composeGraphLow: vlh1
+                       high: vhh1
+                       and: vh2
+                       withMapping: aMapping
+                       withValue: values).
               u ]
 ]
 

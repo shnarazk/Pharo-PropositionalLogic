@@ -23,8 +23,13 @@ BDDTest >> testApplyOnAndWithMappingWithValue [
 { #category : 'tests' }
 BDDTest >> testComposeGraphLowHighAndWithMappingWithValue [
 
-	self flag: #toImplement.
-	self assert: false
+    | f1 f2 result |
+    f1 := DDBuilder app1.
+    self assert: f1 size equals: 2.
+    f2 := DDBuilder app2.
+    self assert: f2 size equals: 2.
+    result := f1 compose: f2 at: 1.
+    self assert: result size equals: 3
 ]
 
 { #category : 'tests' }

@@ -61,7 +61,7 @@ DD >> apply: anOperator unit: aBool with: other [
 ]
 
 { #category : 'algorithm' }
-DD >> compose: anVarIndex as: other [
+DD >> compose: other at: anVarIndex [
     "return a new diagram defined as f_1|_{x_i=f_2}"
 
     | aGraph otherGraph mapping values |
@@ -71,7 +71,7 @@ DD >> compose: anVarIndex as: other [
     mapping := Dictionary newFrom:
                    ((aGraph allNodesSet inject: otherGraph allNodesSet
                          into: [ :set :node | set add: node; yourself ]) asOrderedCollection
-                        withIndexCollect: [ :i :node | node -> (i + 2) ]).
+                        withIndexCollect: [ :node :i | node -> (i + 2) ]).
     mapping at: 1 put: false; at: 2 put: true.
     "mapping from index to node. Contract: embed anVarIndex at 0, false at 1 and true at 2"
     mapping at: 0 put: anVarIndex; at: false put: false; at: true put: true.
