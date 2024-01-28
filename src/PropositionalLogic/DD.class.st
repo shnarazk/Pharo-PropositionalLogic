@@ -26,6 +26,14 @@ DD >> = other [
 	^ graph = other graph
 ]
 
+{ #category : 'accessing' }
+DD >> @- aNode [
+    "The reverse of '@' returning integer index of aNode. If aNode is false(true) as a terminal vertex,
+    return 1(2)."
+
+    ^ aNode isLiteral ifTrue: [ aNode ifFalse: [ 1 ] ifTrue: [ 2 ] ] ifFalse: [ aNode index ]
+]
+
 { #category : 'composing' }
 DD >> and: other [
 
@@ -49,18 +57,24 @@ DD >> apply: anOperator unit: aBool with: other [
                  on: graph
                  and: otherGraph
                  using: aDict.
-    ^ self "reduce"
+    ^ self reduce
 ]
 
 { #category : 'algorithm' }
 DD >> compose: anVarIndex as: other [
     "f_1|_{x_i=f_2}"
 
-   self composeGraph: graph and: other graph at: anVarIndex 
+    | aDict otherGraph |
+    "Contract: embed anVarIndex at 0, false at 1 and true at 2"
+    aDict := Dictionary new at: 0 put: anVarIndex; at: false put: false; at: true put: true;
+                     yourself.
+    otherGraph := other graph reindexedClone: graph allNodesSet size + 1; yourself.
+    graph := self composeGraphLow: graph high: graph and: otherGraph using: aDict.
+    ^ self reduce
 ]
 
-{ #category : 'as yet unclassified' }
-DD >> composeGraph: aGraph and: otherGraph at: anVarIndex [
+{ #category : 'algorithm - private' }
+DD >> composeGraphLow: vlow1 high: vhigh1 and: v2 using: aTable [
 
     self subclassResponsibility
 ]

@@ -98,8 +98,7 @@ BDD >> apply: operator on: v1 and: v2 using: aTable [
 
     | controlling hashKey value1 value2 value u |
     controlling := aTable at: 0.
-    hashKey := (v1 isLiteral ifTrue: [ v1 ifFalse: [ 1 ] ifTrue: [ 2 ] ] ifFalse: [ v1 index ])
-               @ (v2 isLiteral ifTrue: [ v2 ifFalse: [ 1 ] ifTrue: [ 2 ] ] ifFalse: [ v2 index ]).
+    hashKey := self @- v1 @ (self @- v2).
     aTable at: hashKey ifPresent: [ :node | node ifNotNil: [ ^ node "have already evaluated" ] ].
     value1 := aTable at: v1 ifAbsent: [ nil ].
     value2 := aTable at: v2 ifAbsent: [ nil ].
@@ -129,10 +128,48 @@ BDD >> apply: operator on: v1 and: v2 using: aTable [
     ^ u
 ]
 
-{ #category : 'algorithm' }
-BDD >> compose: x1 and: x2 [
+{ #category : 'algorithm - private' }
+BDD >> composeGraphLow: nodeLow high: nodeHigh and: otherNode using: aDict [
+    "Recursive routine to implement BDD>>compose:and:at:"
 
-    self notYetImplemented
+    | vlow1 vhigh1 value nodes hashKey |
+    vlow1 := nodeLow.
+    vhigh1 := nodeHigh.
+    nodes := OrderedCollection new add: vlow1; add: vhigh1; add: otherNode; yourself.
+    vlow1 varIndex = (aDict at: 0) ifTrue: [ vlow1 := vlow1 low ].
+    vhigh1 varIndex = (aDict at: 0) ifTrue: [ vhigh1 := vhigh1 high ].
+    "Apply operation IfThenElse"
+    hashKey := nodes collect: [ :each | self @- each ].
+    aDict at: hashKey ifAbsent: [ :evaluated | "have already evaluaeted" ^ evaluated ].
+    value := aDict at: otherNode ifPresent: [ :b2 |
+                 aDict at: vlow1
+                     ifPresent: [ :bl |
+                     aDict at: vhigh1 ifPresent: [ :bh | b2 not & bl | (b2 & bh) ] ] ].
+    ^ value
+          ifNotNil: [
+              aDict at: hashKey put: value. "add vertex to table"
+              value ]
+          ifNil: [ "create nonterminal and evaluate further down"
+              | u varIndex vll1 vhl1 vlh1 vhh1 vl2 vh2 |
+              u := DDNode new.
+              aDict at: hashKey put: u. "add vertex to table"
+              aDict at: u put: value.
+              varIndex := nodes inject: 0 into: [ :vi :node |
+                              node isLiteral ifTrue: [ vi ]
+                                  ifFalse: [
+                                  vi = 0 ifTrue: [ node varIndex ]
+                                      ifFalse: [ node varIndex min: vi ] ] ].
+              self assert: varIndex ~= 0 description: 'invaild varIndex for new node'.
+              u varIndex: varIndex.
+              vll1 := vlow1 varIndex = varIndex ifTrue: [ vlow1 low ] ifFalse: [ vlow1 ].
+              vlh1 := vlow1 varIndex = varIndex ifTrue: [ vlow1 high ] ifFalse: [ vlow1 ].
+              vhl1 := vhigh1 varIndex = varIndex ifTrue: [ vhigh1 low ] ifFalse: [ vhigh1 ].
+              vhh1 := vhigh1 varIndex = varIndex ifTrue: [ vhigh1 high ] ifFalse: [ vhigh1 ].
+              vl2 := otherNode varIndex = varIndex ifTrue: [ otherNode low ] ifFalse: [ otherNode ].
+              vh2 := otherNode varIndex = varIndex ifTrue: [ otherNode high ] ifFalse: [ otherNode ].
+              u low: (self composeGraphLow: vll1 high: vhl1 and: vl2 using: aDict).
+              u high: (self composeGraphLow: vlh1 high: vhh1 and: vh2 using: aDict).
+              u ]
 ]
 
 { #category : 'algorithm - private' }
