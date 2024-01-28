@@ -41,20 +41,20 @@ DD >> apply: operator on: aGraph and: otherGraph withMapping: aMapping withValue
 { #category : 'algorithm' }
 DD >> apply: anOperator unit: aBool with: other [
 
-    | index aDict |
-    "mapping from terminal and nonterminal node to index"
-    index := Dictionary newFrom:
-                 ((graph allNodesSet inject: other graph allNodesSet
-                       into: [ :set :node | set add: node; yourself ]) asOrderedCollection
-                      withIndexCollect: [ :node :i | node -> (i + 2) ]).
-    index at: false put: 1; at: true put: 2.
+    | mapping values |
+    "mapping between terminal and nonterminal node and index"
+    mapping := Dictionary newFrom:
+                   ((graph allNodesSet inject: other graph allNodesSet
+                         into: [ :set :node | set add: node; yourself ]) asOrderedCollection
+                        withIndexCollect: [ :node :i | node -> (i + 2) ]).
     "Contract: embed anOperator at -1, aBool at 0, false at 1 and true at 2"
-    aDict := Dictionary new at: 0 put: aBool; at: false put: false; at: true put: true; yourself.
+    mapping at: 0 put: aBool; at: false put: 1; at: true put: 2; at: false put: 1; at: true put: 2.
+    values := Dictionary new at: 0 put: aBool; at: false put: false; at: true put: true; yourself.
     graph := self apply: anOperator
                  on: graph
                  and: other graph
-                 indexed: index
-                 using: aDict.
+                 withMapping: mapping
+                 withValue: values.
     ^ self reduce
 ]
 
@@ -62,22 +62,22 @@ DD >> apply: anOperator unit: aBool with: other [
 DD >> compose: anVarIndex as: other [
     "f_1|_{x_i=f_2}"
 
-    | index aDict otherGraph |
+    | mapping values |
     "mapping from terminal and nonterminal node to index"
-    index := Dictionary newFrom:
-                 ((graph allNodesSet inject: other graph allNodesSet
-                       into: [ :set :node | set add: node; yourself ]) asOrderedCollection
-                      withIndexCollect: [ :i :node | node -> (i + 2) ]).
-    index at: 1 put: false; at: 2 put: true.
-    "Contract: embed anVarIndex at 0, false at 1 and true at 2"
-    aDict := Dictionary new at: 0 put: anVarIndex; at: false put: false; at: true put: true;
-                     yourself.
-    otherGraph := other graph reindexedClone: graph allNodesSet size + 1; yourself.
+    mapping := Dictionary newFrom:
+                   ((graph allNodesSet inject: other graph allNodesSet
+                         into: [ :set :node | set add: node; yourself ]) asOrderedCollection
+                        withIndexCollect: [ :i :node | node -> (i + 2) ]).
+    mapping at: 1 put: false; at: 2 put: true.
+    "mapping from index to node. Contract: embed anVarIndex at 0, false at 1 and true at 2"
+    mapping at: 0 put: anVarIndex; at: false put: false; at: true put: true.
+    values := Dictionary new at: 0 put: anVarIndex; at: false put: false; at: true put: true;
+                      yourself.
     graph := self composeGraphLow: graph
                  high: graph
-                 and: otherGraph
-                 indexed: index
-                 using: aDict.
+                 and: other graph
+                 withMapping: mapping
+                 withValue: values.
     ^ self reduce
 ]
 
