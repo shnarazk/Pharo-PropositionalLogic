@@ -81,7 +81,7 @@ Class {
 }
 
 { #category : 'algorithm - private' }
-BDD >> apply: operator on: v1 and: v2 indexed: index using: aTable [
+BDD >> apply: operator on: v1 and: v2 withMapping: aMapping withValue: values [
     "recursive routine to implement apply:unit:with:. Both of v1 and v2 are non-terminal vertexes."
 
     "Second, suppose the algorithm is applied to two vertices where one, say v1, is a terminal vertex,
@@ -97,11 +97,11 @@ BDD >> apply: operator on: v1 and: v2 indexed: index using: aTable [
     a, otherwise b <op> X = X."
 
     | controlling hashKey value1 value2 value u |
-    controlling := aTable at: 0.
-    hashKey := (index at: v1) @ (index at: v2).
-    aTable at: hashKey ifPresent: [ :node | node ifNotNil: [ ^ node "have already evaluated" ] ].
-    value1 := aTable at: v1 ifAbsent: [ nil ].
-    value2 := aTable at: v2 ifAbsent: [ nil ].
+    controlling := values at: 0.
+    hashKey := (aMapping at: v1) @ (aMapping at: v2).
+    aMapping at: hashKey ifPresent: [ :node | node ifNotNil: [ ^ node "have already evaluated" ] ].
+    value1 := values at: v1 ifAbsent: [ nil ].
+    value2 := values at: v2 ifAbsent: [ nil ].
     "u.value := v1.value <op> v2.value"
     value := (value1 = controlling or: [ value2 = controlling ]) ifTrue: [ controlling ]
                  ifFalse: [
@@ -110,7 +110,7 @@ BDD >> apply: operator on: v1 and: v2 indexed: index using: aTable [
              | v1Literal v2Literal vlow1 vlow2 vhigh1 vhigh2 w |
              "create a nonterminal vertex and evaluate further down"
              w := DDNode new.
-             aTable at: w put: value.
+             values at: w put: value.
              v1Literal := v1 isLiteral ifTrue: [ v1 ] ifFalse: [ v1 varIndex ].
              v2Literal := v2 isLiteral ifTrue: [ v2 ] ifFalse: [ v2 varIndex ].
              w varIndex: (v1 isLiteral ifTrue: [
@@ -121,39 +121,47 @@ BDD >> apply: operator on: v1 and: v2 indexed: index using: aTable [
              vlow2 := v2Literal = w varIndex ifTrue: [ v2 low ] ifFalse: [ v2 ].
              vhigh1 := v1Literal = w varIndex ifTrue: [ v1 high ] ifFalse: [ v1 ].
              vhigh2 := v2Literal = w varIndex ifTrue: [ v2 high ] ifFalse: [ v2 ].
-             w low: (self apply: operator on: vlow1 and: vlow2 indexed: index using: aTable).
-             w high: (self apply: operator on: vhigh1 and: vhigh2 indexed: index using: aTable).
+             w low: (self apply: operator
+                      on: vlow1
+                      and: vlow2
+                      withMapping: aMapping
+                      withValue: values).
+             w high: (self apply: operator
+                      on: vhigh1
+                      and: vhigh2
+                      withMapping: aMapping
+                      withValue: values).
              w ].
-    aTable at: hashKey put: u.
+    aMapping at: hashKey put: u.
     ^ u
 ]
 
 { #category : 'algorithm - private' }
-BDD >> composeGraphLow: nodeLow high: nodeHigh and: otherNode indexed: index using: aDict [
+BDD >> composeGraphLow: nodeLow high: nodeHigh and: otherNode withMapping: aMapping withValue: values [
     "Recursive routine to implement BDD>>compose:and:at:"
 
     | vlow1 vhigh1 value nodes hashKey |
     vlow1 := nodeLow.
     vhigh1 := nodeHigh.
     nodes := OrderedCollection new add: vlow1; add: vhigh1; add: otherNode; yourself.
-    vlow1 varIndex = (aDict at: 0) ifTrue: [ vlow1 := vlow1 low ].
-    vhigh1 varIndex = (aDict at: 0) ifTrue: [ vhigh1 := vhigh1 high ].
+    vlow1 varIndex = (values at: 0) ifTrue: [ vlow1 := vlow1 low ].
+    vhigh1 varIndex = (values at: 0) ifTrue: [ vhigh1 := vhigh1 high ].
     "Apply operation IfThenElse"
-    hashKey := nodes collect: [ :each | index at: each ].
-    aDict at: hashKey ifAbsent: [ :evaluated | "have already evaluaeted" ^ evaluated ].
-    value := aDict at: otherNode ifPresent: [ :b2 |
-                 aDict at: vlow1
+    hashKey := nodes collect: [ :each | aMapping at: each ].
+    aMapping at: hashKey ifAbsent: [ :evaluated | "have already evaluaeted" ^ evaluated ].
+    value := aMapping at: otherNode ifPresent: [ :b2 |
+                 aMapping at: vlow1
                      ifPresent: [ :bl |
-                     aDict at: vhigh1 ifPresent: [ :bh | b2 not & bl | (b2 & bh) ] ] ].
+                     aMapping at: vhigh1 ifPresent: [ :bh | b2 not & bl | (b2 & bh) ] ] ].
     ^ value
           ifNotNil: [
-              aDict at: hashKey put: value. "add vertex to table"
+              aMapping at: hashKey put: value. "add vertex to table"
               value ]
           ifNil: [ "create nonterminal and evaluate further down"
               | u varIndex vll1 vhl1 vlh1 vhh1 vl2 vh2 |
               u := DDNode new.
-              aDict at: hashKey put: u. "add vertex to table"
-              aDict at: u put: value.
+              aMapping at: hashKey put: u. "add vertex to table"
+              aMapping at: u put: value.
               varIndex := nodes inject: 0 into: [ :vi :node |
                               node isLiteral ifTrue: [ vi ]
                                   ifFalse: [
@@ -167,8 +175,8 @@ BDD >> composeGraphLow: nodeLow high: nodeHigh and: otherNode indexed: index usi
               vhh1 := vhigh1 varIndex = varIndex ifTrue: [ vhigh1 high ] ifFalse: [ vhigh1 ].
               vl2 := otherNode varIndex = varIndex ifTrue: [ otherNode low ] ifFalse: [ otherNode ].
               vh2 := otherNode varIndex = varIndex ifTrue: [ otherNode high ] ifFalse: [ otherNode ].
-              u low: (self composeGraphLow: vll1 high: vhl1 and: vl2 using: aDict).
-              u high: (self composeGraphLow: vlh1 high: vhh1 and: vh2 using: aDict).
+              u low: (self composeGraphLow: vll1 high: vhl1 and: vl2 using: aMapping).
+              u high: (self composeGraphLow: vlh1 high: vhh1 and: vh2 using: aMapping).
               u ]
 ]
 

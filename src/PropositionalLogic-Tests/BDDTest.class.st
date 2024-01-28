@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : 'tests' }
-BDDTest >> testApplyOnAndIndexedUsing [
+BDDTest >> testApplyOnAndWithMappingWithValue [
 
     | f1 f2 |
     f1 := DDBuilder app1.
@@ -18,6 +18,25 @@ BDDTest >> testApplyOnAndIndexedUsing [
     self assert: f2 size equals: 2.
     f1 or: f2.
     self assert: f1 size equals: 3
+]
+
+{ #category : 'tests' }
+BDDTest >> testApplyOnAndWithmapping [
+
+    | f1 f2 |
+    f1 := DDBuilder app1.
+    self assert: f1 size equals: 2.
+    f2 := DDBuilder app2.
+    self assert: f2 size equals: 2.
+    f1 or: f2.
+    self assert: f1 size equals: 3
+]
+
+{ #category : 'tests' }
+BDDTest >> testComposeGraphLowHighAndWithMappingWithValue [
+
+	self flag: #toImplement.
+	self assert: false
 ]
 
 { #category : 'tests' }

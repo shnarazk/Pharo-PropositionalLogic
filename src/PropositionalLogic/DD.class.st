@@ -33,7 +33,7 @@ DD >> and: other [
 ]
 
 { #category : 'algorithm - private' }
-DD >> apply: operator on: aGraph and: otherGraph indexed: index using: aTable [
+DD >> apply: operator on: aGraph and: otherGraph withMapping: aMapping withValue: aTable [
 
     self subclassResponsibility
 ]
@@ -82,13 +82,7 @@ DD >> compose: anVarIndex as: other [
 ]
 
 { #category : 'algorithm - private' }
-DD >> composeGraphLow: vlow1 high: vhigh1 and: v2 indexed: index using: aTable [
-
-    self subclassResponsibility
-]
-
-{ #category : 'algorithm - private' }
-DD >> composeGraphLow: vlow1 high: vhigh1 and: v2 using: aTable [
+DD >> composeGraphLow: vlow1 high: vhigh1 and: v2 withMapping: aMapping withValue: values [
 
     self subclassResponsibility
 ]
