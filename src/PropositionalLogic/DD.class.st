@@ -66,6 +66,20 @@ DD >> apply: anOperator unit: aBool with: other [
                    withValue: values); reduce; yourself
 ]
 
+{ #category : 'composing' }
+DD >> asBDD [
+    "return a new BDD diagram converted from me"
+
+    ^ BDD new graph: graph; reduce; yourself
+]
+
+{ #category : 'composing' }
+DD >> asZDD [
+    "return a new ZDD diagram converted from me"
+
+    ^ ZDD new graph: graph; reduce; yourself
+]
+
 { #category : 'algorithm' }
 DD >> compose: other at: anVarIndex [
     "return a new diagram defined as f_1|_{x_i=f_2}"
@@ -136,9 +150,9 @@ DD >> reduce [
 
 { #category : 'algorithm - private' }
 DD >> reduce: aGraph [
-    "reduce to canonical form"
+    "reduce to a canonical form: Nothing changed in this class"
 
-    self subclassResponsibility
+    
 ]
 
 { #category : 'algorithm' }

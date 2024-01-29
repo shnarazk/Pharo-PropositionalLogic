@@ -31,10 +31,14 @@ ZDD >> apply: operator on: v1 and: v2 using: aTable [
 { #category : 'algorithm - private' }
 ZDD >> reduce: aNode [
 
-    | nodes subgraph vlist nextId |
-    nodes := graph setIndex; allNodesSet.
-    subgraph := (Array new: nodes size + 2 withAll: nil) at: 1 put: false; at: 2 put: true;
-                        yourself.
+    | nodes subgraph vlist nextId index |
+    nodes := graph allNodesSet.
+    "mapping from node to index"
+    index := IdentityDictionary newFrom:
+                 (nodes asArray withIndexCollect: [ :node :i | node -> (i + 2) ]).
+    index at: false put: 1; at: true put: 2.
+    "mapping to node from index"
+    subgraph := (Array new: nodes size + 2) at: 1 put: false; at: 2 put: true; yourself.
     "Put each vertex u reachable from v on list vlist[u.index]"
     vlist := nodes inject: Dictionary new into: [ :dic :node |
                  dic at: node varIndex
@@ -44,8 +48,9 @@ ZDD >> reduce: aNode [
     vlist keys sorted reversed do: [ :literal |
         | q oldKey |
         q := (vlist at: literal) inject: OrderedCollection new into: [ :c :u |
-                 u high = false ifTrue: [ "This is ruduction rule of ZDD" u index: u lowIndex ]
-                     ifFalse: [ c add: u lowIndex @ u highIndex -> u ].
+                 (u high isLiteral and: [ u high not ]) ifTrue: [ "This is ruduction rule of ZDD"
+                     index at: u put: (index at: u low) ]
+                     ifFalse: [ c add: (index at: u low) @ (index at: u high) -> u ].
                  c ].
         oldKey := nil. "unmatchable key"
         q sorted do: [ :tmp |
@@ -55,9 +60,10 @@ ZDD >> reduce: aNode [
             key = oldKey ifTrue: [ u index: nextId "matches existing vervex" ]
                 ifFalse: [ "unique vertex"
                     nextId := nextId + 1.
-                    u index: nextId; low: (subgraph at: u lowIndex); high:
-                            (subgraph at: u highIndex).
+                    u low: (subgraph at: (index at: u low)).
+                    u high: (subgraph at: (index at: u high)).
+                    index at: u put: nextId.
                     subgraph at: nextId put: u.
                     oldKey := key ] ] ].
-    ^ subgraph at: aNode index
+    ^ subgraph at: (index at: aNode)
 ]
