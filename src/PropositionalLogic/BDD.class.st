@@ -233,9 +233,11 @@ BDD >> reduce: aNode [
             a := an key.
             b := bn key.
             a x = b x ifTrue: [ a y < b y ] ifFalse: [ a x < b x ] ].
+        q traceCr.
         q do: [ :tmp |
             | key u |
             key := tmp key.
+            key traceCr.
             u := tmp value.
             "self assert: u low ~= u high description: 'this should be deleted'"
             key = oldKey ifTrue: [ index at: u put: nextId "matches existing vervex" ]

@@ -29,6 +29,78 @@ DDBuilder class >> app2 [
 ]
 
 { #category : 'examples' }
+DDBuilder class >> independent [
+    "the independent subsets of Cn correspond to arrangements of 0s and 1s in a circle of
+    length n, with no two 1s in a row; the kernels correspond to such arrangements in which
+    there also are no three consecutive 0s."
+
+    <todo: 'something is missing'>
+    ^ DD newFromAssociation: 1 -> {
+              (2 -> {
+                   (3 -> {
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. false }) }).
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { false. false }) }) }).
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. false }) }).
+                             (5 -> {
+                                  (6 -> { false. false }).
+                                  (6 -> { false. false }) }) }) }).
+                   (3 -> {
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. false }) }).
+                             (5 -> {
+                                  (6 -> { false. false }).
+                                  (6 -> { false. false }) }) }).
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { false. false }).
+                                  (6 -> { false. false }) }).
+                             (5 -> {
+                                  (6 -> { false. false }).
+                                  (6 -> { false. false }) }) }) }) }).
+              (2 -> {
+                   (3 -> {
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. false }) }).
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { false. false }) }) }).
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. false }) }).
+                             (5 -> {
+                                  (6 -> { false. false }).
+                                  (6 -> { false. false }) }) }) }).
+                   (3 -> {
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { false. false }).
+                                  (6 -> { false. false }) }).
+                             (5 -> {
+                                  (6 -> { false. false }).
+                                  (6 -> { false. false }) }) }).
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { false. false }).
+                                  (6 -> { false. false }) }).
+                             (5 -> {
+                                  (6 -> { false. false }).
+                                  (6 -> { false. false }) }) }) }) }) }
+]
+
+{ #category : 'examples' }
 DDBuilder class >> indp [
     "the independent subsets of Cn correspond to arrangements of 0s and 1s in a circle of
     length n, with no two 1s in a row; the kernels correspond to such arrangements in which
