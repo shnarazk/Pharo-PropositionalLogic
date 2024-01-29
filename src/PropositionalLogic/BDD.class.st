@@ -207,7 +207,7 @@ BDD >> reduce: aNode [
     "This is an abnormal implementation of BDD>>reduce since index order is reveresed."
 
     | nodes subgraph vlist nextId index |
-    nodes := graph allNodesSet. "setIndex;"
+    nodes := graph allNodesSet.
     "mapping from node to index: integer"
     index := IdentityDictionary newFrom:
                  (nodes asArray withIndexCollect: [ :node :i | node -> (i + 2) ]).

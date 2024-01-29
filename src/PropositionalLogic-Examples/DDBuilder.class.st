@@ -30,7 +30,11 @@ DDBuilder class >> app2 [
 
 { #category : 'examples' }
 DDBuilder class >> indp [
+    "the independent subsets of Cn correspond to arrangements of 0s and 1s in a circle of
+    length n, with no two 1s in a row; the kernels correspond to such arrangements in which
+    there also are no three consecutive 0s."
 
+    <todo: 'something is missing'>
     ^ DD newFromAssociation: 1 -> {
               (2 -> {
                    (3 -> {
@@ -38,7 +42,9 @@ DDBuilder class >> indp [
                              (5 -> {
                                   true.
                                   (6 -> { true. false }) }).
-                             (5 -> { true. false }) }).
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  false }) }).
                         (4 -> {
                              (5 -> {
                                   true.
