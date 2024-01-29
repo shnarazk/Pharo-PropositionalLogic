@@ -49,8 +49,8 @@ ZDD >> reduce: aNode [
         | q oldKey |
         oldKey := nil. "unmatchable key"
         q := (vlist at: varIndex) inject: OrderedCollection new
-                 into: [ :c :u | "value equevalency is required"
-                     (index at: u high) = 1 ifTrue: [ "Treduction vertex in ZDD"
+                 into: [ :c :u | "value equivalency is required"
+                     (index at: u high) = 1 ifTrue: [ "redundant vertex in ZDD"
                          index at: u put: (index at: u low) ]
                          ifFalse: [ c add: (index at: u low) @ (index at: u high) -> u ].
                      c ].

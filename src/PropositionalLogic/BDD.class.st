@@ -225,7 +225,7 @@ BDD >> reduce: aNode [
         oldKey := nil. "unmatchable key"
         q := (vlist at: varIndex) inject: OrderedCollection new
                  into: [ :c :u | "value equivaleny is required"
-                     (index at: u low) = (index at: u high) ifTrue: [ "redundunt vertex"
+                     (index at: u low) = (index at: u high) ifTrue: [ "redundant vertex"
                          index at: u put: (index at: u low) ]
                          ifFalse: [ c add: (index at: u low) @ (index at: u high) -> u ].
                      c ].
