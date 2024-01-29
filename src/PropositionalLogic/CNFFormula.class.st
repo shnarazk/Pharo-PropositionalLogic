@@ -5,7 +5,8 @@ Class {
 	#name : 'CNFFormula',
 	#superclass : 'CNF',
 	#instVars : [
-		'clauses'
+		'clauses',
+		'numberOfVars'
 	],
 	#category : 'PropositionalLogic-Satisfiability',
 	#package : 'PropositionalLogic',

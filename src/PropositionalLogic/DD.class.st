@@ -20,6 +20,12 @@ DD class >> newFromAssociation: anAssociation [
 	^ self new setGraphFromAssociation: anAssociation; reduce; yourself
 ]
 
+{ #category : 'instance creation' }
+DD class >> newFromCNF: anCNF [
+
+    self subclassResponsibility
+]
+
 { #category : 'comparing' }
 DD >> = other [
 
