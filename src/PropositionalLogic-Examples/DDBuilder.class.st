@@ -40,10 +40,10 @@ DDBuilder class >> indp [
                                   (6 -> { true. false }) }).
                              (5 -> { true. false }) }).
                         (4 -> {
-                             true.
                              (5 -> {
                                   true.
-                                  (6 -> { true. false }) }) }) }).
+                                  (6 -> { true. false }) }).
+                             false }) }).
                    (3 -> {
                         (4 -> {
                              (5 -> {

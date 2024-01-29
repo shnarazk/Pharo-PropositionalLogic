@@ -208,29 +208,36 @@ BDD >> reduce: aNode [
 
     | nodes subgraph vlist nextId index |
     nodes := graph allNodesSet. "setIndex;"
-    "mapping from node to index"
+    "mapping from node to index: integer"
     index := IdentityDictionary newFrom:
                  (nodes asArray withIndexCollect: [ :node :i | node -> (i + 2) ]).
     index at: false put: 1; at: true put: 2.
-    "mapping to node from index"
-    subgraph := (Array new: nodes size + 2) at: 1 put: false; at: 2 put: true; yourself.
+    "mapping from index: integer to (non)terminal node"
+    subgraph := IdentityDictionary new at: 1 put: false; at: 2 put: true; yourself.
     "Put each vertex u reachable from v on list vlist[u.index]"
     vlist := nodes inject: Dictionary new into: [ :dic :node |
                  dic at: node varIndex
                      ifPresent: [ :set | set add: node ]
-                     ifAbsentPut: [ OrderedCollection new add: node; yourself ]; yourself ].
+                     ifAbsentPut: [ Set new add: node; yourself ]; yourself ].
     nextId := 2.
-    vlist keys sorted reversed do: [ :literal |
+    vlist keys sorted reversed do: [ :varIndex |
         | q oldKey |
-        q := (vlist at: literal) inject: OrderedCollection new
+        q := (vlist at: varIndex) inject: OrderedCollection new
                  into: [ :c :u | "value equivaleny is required"
-                     u low = u high ifTrue: [ index at: u put: (index at: u low) ]
+                     u low = u high ifTrue: [ "redundunt vertex" index at: u put: (index at: u low) ]
                          ifFalse: [ c add: (index at: u low) @ (index at: u high) -> u ].
                      c ].
         oldKey := nil. "unmatchable key"
-        q sorted do: [ :tmp |
+        q sort: [ :an :bn |
+            | a b |
+            a := an key.
+            b := bn key.
+            a x = b x ifTrue: [ a y < b y ] ifFalse: [ a x < b x ] ].
+        q traceCr.
+        q do: [ :tmp |
             | key u |
             key := tmp key.
+            key traceCr.
             u := tmp value.
             self assert: u low ~= u high description: 'this should be deleted'.
             key = oldKey ifTrue: [ index at: u put: nextId "matches existing vervex" ]
