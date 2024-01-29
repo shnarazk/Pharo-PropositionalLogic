@@ -58,7 +58,7 @@ DDBuilder class >> independent [
                                   (6 -> { true. true }).
                                   (6 -> { true. false }) }).
                              (5 -> {
-                                  (6 -> { false. false }).
+                                  (6 -> { true. true }).
                                   (6 -> { false. false }) }) }).
                         (4 -> {
                              (5 -> {
@@ -71,14 +71,14 @@ DDBuilder class >> independent [
                    (3 -> {
                         (4 -> {
                              (5 -> {
-                                  (6 -> { true. true }).
+                                  (6 -> { true. false }).
                                   (6 -> { true. false }) }).
                              (5 -> {
-                                  (6 -> { true. true }).
+                                  (6 -> { true. false }).
                                   (6 -> { false. false }) }) }).
                         (4 -> {
                              (5 -> {
-                                  (6 -> { true. true }).
+                                  (6 -> { true. false }).
                                   (6 -> { true. false }) }).
                              (5 -> {
                                   (6 -> { false. false }).

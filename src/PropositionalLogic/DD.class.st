@@ -231,9 +231,11 @@ DD >> visualize [
     elements := elements as: RSGroup.
     canvas := RSCanvas new addAll: elements; yourself.
     RSLineBuilder line dashed; moveBehind; canvas: canvas; width: 1; color: Color blue;
-        connectFromAll: [ :each | nodes select: [ :n | n low == each ] ].
+        connectFromAll: [ :each | nodes select: [ :n | n low == each and: [ n high ~= each ] ] ].
     RSLineBuilder line moveBehind; canvas: canvas; width: 1; color: Color red; connectFromAll: [
-            :each | nodes select: [ :n | n high == each ] ].
+            :each | nodes select: [ :n | n low ~= each and: [ n high == each ] ] ].
+    RSLineBuilder line moveBehind; canvas: canvas; width: 1; color: Color black; connectFromAll: [
+            :each | nodes select: [ :n | n low == each and: [ n high == each ] ] ].
     RSTreeLayout new on: elements.
     ^ canvas @ RSCanvasController; canvas
 ]

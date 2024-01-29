@@ -225,7 +225,8 @@ BDD >> reduce: aNode [
         oldKey := nil. "unmatchable key"
         q := (vlist at: varIndex) inject: OrderedCollection new
                  into: [ :c :u | "value equivaleny is required"
-                     u low = u high ifTrue: [ "redundunt vertex" index at: u put: (index at: u low) ]
+                     (index at: u low) = (index at: u high) ifTrue: [ "redundunt vertex"
+                         index at: u put: (index at: u low) ]
                          ifFalse: [ c add: (index at: u low) @ (index at: u high) -> u ].
                      c ].
         q sort: [ :an :bn |
@@ -233,11 +234,9 @@ BDD >> reduce: aNode [
             a := an key.
             b := bn key.
             a x = b x ifTrue: [ a y < b y ] ifFalse: [ a x < b x ] ].
-        q traceCr.
         q do: [ :tmp |
             | key u |
             key := tmp key.
-            key traceCr.
             u := tmp value.
             "self assert: u low ~= u high description: 'this should be deleted'"
             key = oldKey ifTrue: [ index at: u put: nextId "matches existing vervex" ]
@@ -245,6 +244,7 @@ BDD >> reduce: aNode [
                     nextId := nextId + 1.
                     u low: (subgraph at: (index at: u low)).
                     u high: (subgraph at: (index at: u high)).
+                    "self assert: (subgraph keys includes: nextId) not."
                     index at: u put: nextId.
                     subgraph at: nextId put: u.
                     oldKey := key ] ] ].
