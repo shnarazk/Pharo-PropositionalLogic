@@ -222,24 +222,22 @@ BDD >> reduce: aNode [
     nextId := 2.
     vlist keys sorted reversed do: [ :varIndex |
         | q oldKey |
+        oldKey := nil. "unmatchable key"
         q := (vlist at: varIndex) inject: OrderedCollection new
                  into: [ :c :u | "value equivaleny is required"
                      u low = u high ifTrue: [ "redundunt vertex" index at: u put: (index at: u low) ]
                          ifFalse: [ c add: (index at: u low) @ (index at: u high) -> u ].
                      c ].
-        oldKey := nil. "unmatchable key"
         q sort: [ :an :bn |
             | a b |
             a := an key.
             b := bn key.
             a x = b x ifTrue: [ a y < b y ] ifFalse: [ a x < b x ] ].
-        q traceCr.
         q do: [ :tmp |
             | key u |
             key := tmp key.
-            key traceCr.
             u := tmp value.
-            self assert: u low ~= u high description: 'this should be deleted'.
+            "self assert: u low ~= u high description: 'this should be deleted'"
             key = oldKey ifTrue: [ index at: u put: nextId "matches existing vervex" ]
                 ifFalse: [ "unique vertex"
                     nextId := nextId + 1.
