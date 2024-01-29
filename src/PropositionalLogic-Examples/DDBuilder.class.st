@@ -29,6 +29,110 @@ DDBuilder class >> app2 [
 ]
 
 { #category : 'examples' }
+DDBuilder class >> indp [
+
+    ^ DD newFromAssociation: 1 -> {
+              (2 -> {
+                   (3 -> {
+                        (4 -> {
+                             (5 -> {
+                                  true.
+                                  (6 -> { true. false }) }).
+                             (5 -> { true. false }) }).
+                        (4 -> {
+                             true.
+                             (5 -> {
+                                  true.
+                                  (6 -> { true. false }) }) }) }).
+                   (3 -> {
+                        (4 -> {
+                             (5 -> {
+                                  true.
+                                  (6 -> { true. false }) }).
+                             (5 -> { true. false }) }).
+                        false }) }).
+              (2 -> {
+                   (3 -> {
+                        (4 -> {
+                             (6 -> { true. false }).
+                             (5 -> {
+                                  (6 -> { true. false }).
+                                  false }) }).
+                        (4 -> {
+                             (6 -> { true. false }).
+                             false }) }).
+                   false }) }
+]
+
+{ #category : 'examples' }
+DDBuilder class >> indpBase [
+
+    ^ DD newFromAssociation: 1 -> {
+              (2 -> {
+                   (3 -> {
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }).
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }) }).
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }).
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }) }) }).
+                   (3 -> {
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }).
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }) }).
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }).
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }) }) }) }).
+              (2 -> {
+                   (3 -> {
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }).
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }) }).
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }).
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }) }) }).
+                   (3 -> {
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }).
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }) }).
+                        (4 -> {
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }).
+                             (5 -> {
+                                  (6 -> { true. true }).
+                                  (6 -> { true. true }) }) }) }) }) }
+]
+
+{ #category : 'examples' }
 DDBuilder class >> majority [
 	"See The Art of Computer Programming, Volume 4A, 7.1.4. Binary Decision Diagrams"
 
